@@ -3,36 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Proiect de practică - Inițiere în specialitate la Colegiul UTM">
-    <meta name="author" content="Numele Studentului">
-    <title>Acasă | [Numele Proiectului Tău]</title>
-    
-    <!-- Conectare CSS viitor -->
+    <meta name="description" content="Serviciu de curierat local rapid și sigur">
+    <meta name="author" content="Panuta Andrei">
+    <title>Curier Local</title>
+
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-    <!-- Antetul paginii -->
-    <header>
-        <nav>
-            <!-- Aici va veni meniul de navigare în Ziua 2 -->
-            <strong>[Logo Proiect]</strong>
-        </nav>
-    </header>
+<header class="main-header">
+    <nav class="main-nav">
+        <div class="logo">
+            <img src="assets/img/logo.png" alt="Logo" height="50">
+            <span>Curier Local</span>
+        </div>
 
-    <!-- Conținutul principal -->
-    <main>
-        <section id="hero">
-            <h1>Bun venit la proiectul meu: [Tema Aleasă]</h1>
-            <p>Această pagină este în curs de dezvoltare în cadrul stagiului de practică.</p>
-        </section>
-    </main>
+        <ul class="nav-list">
+            <li><a href="#hero">Acasă</a></li>
+            <li><a href="#servicii">Servicii</a></li>
+            <li><a href="#despre">Despre</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+</header>
 
-    <!-- Subsolul paginii -->
-    <footer>
-        <p>&copy; 2026 - Colegiul UTM. Realizat de [Numele Studentului].</p>
-    </footer>
+<main>
+
+<section id="hero" class="hero">
+    <h1>Livrăm rapid, direct la tine!</h1>
+    <p>Curierat local pentru persoane și afaceri mici.</p>
+    <a href="#contact" class="btn">Comandă acum</a>
+</section>
+
+<section id="servicii" class="servicii">
+    <h2>Serviciile noastre</h2>
+
+    <div class="cards">
+        <article class="card">
+            <h3>🚚 Livrare rapidă</h3>
+            <p>Livrare în aceeași zi în oraș.</p>
+        </article>
+
+        <article class="card">
+            <h3>📦 Ridicare colet</h3>
+            <p>Preluăm coletul direct de la tine.</p>
+        </article>
+
+        <article class="card">
+            <h3>⏰ Livrare programată</h3>
+            <p>Alegi ora livrării.</p>
+        </article>
+    </div>
+</section>
+
+<section id="despre" class="despre">
+    <h2>Despre noi</h2>
+    <p>Suntem un serviciu local de curierat dedicat livrărilor rapide și sigure. Ne concentrăm pe calitate și satisfacția clienților.</p>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Contact</h2>
+    <p>Email: curierlocal@email.com</p>
+    <p>Telefon: 068355414</p>
+</section>
+
+</main>
+
+<footer class="main-footer">
+    <p>&copy; 2026 - Curier Local | Panuta Andrei</p>
+</footer>
 
 </body>
 </html>
-
