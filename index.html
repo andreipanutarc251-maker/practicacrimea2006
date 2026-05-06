@@ -1,77 +1,384 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Serviciu de curierat local rapid și sigur">
-    <meta name="author" content="Panuta Andrei">
-    <title>Curier Local</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastCourier Pro</title>
 
-    <link rel="stylesheet" href="assets/css/style.css">
+<style>
+
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+
+/* ================= HEADER ================= */
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 25px;
+background:#0f172a;
+color:white;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+nav a{
+color:white;
+margin:0 10px;
+text-decoration:none;
+transition:0.3s;
+}
+
+nav a:hover{color:#38bdf8}
+
+/* ================= HERO ================= */
+.hero{
+height:70vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+background:linear-gradient(120deg,#2563eb,#06b6d4);
+color:white;
+}
+
+.hero h1{font-size:40px;margin-bottom:10px}
+.hero button{
+padding:10px 20px;
+border:none;
+background:#111;
+color:white;
+cursor:pointer;
+margin-top:15px;
+border-radius:5px;
+}
+
+/* ================= SECTIONS ================= */
+section{padding:50px 20px}
+
+.title{text-align:center;font-size:28px;margin-bottom:20px}
+
+/* ================= CARDS ================= */
+.cards{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+justify-content:center;
+}
+
+.card{
+width:250px;
+padding:15px;
+background:#f1f5f9;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.card:hover{transform:translateY(-5px)}
+
+/* ================= FORMS ================= */
+input,textarea{
+width:100%;
+padding:10px;
+margin:5px 0;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+cursor:pointer;
+background:#0f172a;
+color:white;
+border-radius:5px;
+}
+
+/* ================= TRACKING ================= */
+.trackBox{
+text-align:center;
+}
+
+#result{
+margin-top:10px;
+font-weight:bold;
+}
+
+/* ================= FAQ ================= */
+.faq{
+background:#e2e8f0;
+padding:10px;
+margin:5px;
+cursor:pointer;
+border-radius:5px;
+}
+
+.answer{
+display:none;
+padding:10px;
+background:#f8fafc;
+}
+
+/* ================= FOOTER ================= */
+footer{
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+margin-top:20px;
+}
+
+/* ================= DARK MODE ================= */
+.dark{
+background:#0b1220;
+color:white;
+}
+
+.dark .card{background:#1e293b;color:white}
+.dark .faq{background:#1e293b}
+.dark .answer{background:#0f172a}
+
+/* ================= MODAL ================= */
+.modal{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+}
+
+.modal-content{
+background:white;
+width:300px;
+margin:10% auto;
+padding:20px;
+border-radius:10px;
+}
+
+/* ================= ADMIN ================= */
+#admin{
+display:none;
+padding:20px;
+background:#111827;
+color:white;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+border:1px solid #444;
+padding:8px;
+}
+
+/* ================= ANIMATION ================= */
+.fade{
+animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+</style>
 </head>
+
 <body>
 
-<header class="main-header">
-    <nav class="main-nav">
-        <div class="logo">
-            <img src="assets/img/logo.png" alt="Logo" height="50">
-            <span>Curier Local</span>
-        </div>
+<header>
+<h2>FastCourier Pro</h2>
+<nav>
+<a href="#servicii">Servicii</a>
+<a href="#tracking">Tracking</a>
+<a href="#contact">Contact</a>
+</nav>
 
-        <ul class="nav-list">
-            <li><a href="#hero">Acasă</a></li>
-            <li><a href="#servicii">Servicii</a></li>
-            <li><a href="#despre">Despre</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
+<div>
+<button onclick="dark()">🌙</button>
+<button onclick="login()">Admin</button>
+</div>
 </header>
 
-<main>
+<!-- HERO -->
+<div class="hero fade">
+<h1>Livrare rapidă oriunde</h1>
+<p>Curier profesional cu sistem inteligent</p>
+<button onclick="openOrder()">Comandă acum</button>
+</div>
 
-<section id="hero" class="hero">
-    <h1>Livrăm rapid, direct la tine!</h1>
-    <p>Curierat local pentru persoane și afaceri mici.</p>
-    <a href="#contact" class="btn">Comandă acum</a>
+<!-- SERVICES -->
+<section id="servicii">
+<h2 class="title">Serviciile noastre</h2>
+
+<div class="cards">
+<div class="card">🚚 Livrare rapidă</div>
+<div class="card">📦 Ridicare colet</div>
+<div class="card">⏱ Programări</div>
+<div class="card">🛡 Asigurare</div>
+</div>
 </section>
 
-<section id="servicii" class="servicii">
-    <h2>Serviciile noastre</h2>
-
-    <div class="cards">
-        <article class="card">
-            <h3>🚚 Livrare rapidă</h3>
-            <p>Livrare în aceeași zi în oraș.</p>
-        </article>
-
-        <article class="card">
-            <h3>📦 Ridicare colet</h3>
-            <p>Preluăm coletul direct de la tine.</p>
-        </article>
-
-        <article class="card">
-            <h3>⏰ Livrare programată</h3>
-            <p>Alegi ora livrării.</p>
-        </article>
-    </div>
+<!-- TRACKING -->
+<section id="tracking" class="trackBox">
+<h2 class="title">Tracking colet</h2>
+<input id="code" placeholder="Cod colet">
+<button onclick="track()">Verifică</button>
+<p id="result"></p>
 </section>
 
-<section id="despre" class="despre">
-    <h2>Despre noi</h2>
-    <p>Suntem un serviciu local de curierat dedicat livrărilor rapide și sigure. Ne concentrăm pe calitate și satisfacția clienților.</p>
+<!-- PRICE -->
+<section>
+<h2 class="title">Calculator preț</h2>
+<input id="kg" placeholder="Greutate kg">
+<button onclick="price()">Calculează</button>
+<p id="priceOut"></p>
 </section>
 
-<section id="contact" class="contact">
-    <h2>Contact</h2>
-    <p>Email: curierlocal@email.com</p>
-    <p>Telefon: 068355414</p>
+<!-- FAQ -->
+<section>
+<h2 class="title">FAQ</h2>
+
+<div class="faq" onclick="faq(this)">Cât durează livrarea?</div>
+<div class="answer">1-2 zile lucrătoare</div>
+
+<div class="faq" onclick="faq(this)">Este sigur?</div>
+<div class="answer">Da, toate coletele sunt asigurate</div>
+
+<div class="faq" onclick="faq(this)">Pot urmări coletul?</div>
+<div class="answer">Da, live tracking</div>
 </section>
 
-</main>
+<!-- CONTACT -->
+<section id="contact">
+<h2 class="title">Contact</h2>
 
-<footer class="main-footer">
-    <p>&copy; 2026 - Curier Local | Panuta Andrei</p>
+<input id="email" placeholder="Email">
+<textarea placeholder="Mesaj"></textarea>
+<button onclick="send()">Trimite</button>
+</section>
+
+<!-- NEWSLETTER -->
+<section>
+<h2 class="title">Newsletter</h2>
+<input placeholder="Email abonare">
+<button>Abonează-te</button>
+</section>
+
+<!-- MAP -->
+<section>
+<h2 class="title">Locația noastră</h2>
+<iframe width="100%" height="200"
+src="https://maps.google.com/maps?q=chisinau&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+</section>
+
+<!-- ADMIN -->
+<section id="admin">
+<h2>Admin Panel</h2>
+<table>
+<thead>
+<tr><th>Client</th><th>Comandă</th></tr>
+</thead>
+<tbody id="orders"></tbody>
+</table>
+</section>
+
+<!-- MODAL ORDER -->
+<div class="modal" id="modal">
+<div class="modal-content">
+<h3>Comandă curier</h3>
+<input id="from" placeholder="De la">
+<input id="to" placeholder="Către">
+<button onclick="save()">Trimite</button>
+<button onclick="closeM()">Închide</button>
+</div>
+</div>
+
+<footer>
+<p>© 2026 FastCourier Pro</p>
 </footer>
+
+<script>
+
+/* DARK MODE */
+function dark(){
+document.body.classList.toggle("dark");
+}
+
+/* MODAL */
+function openOrder(){
+document.getElementById("modal").style.display="block";
+}
+
+function closeM(){
+document.getElementById("modal").style.display="none";
+}
+
+/* SAVE ORDER */
+function save(){
+let f=document.getElementById("from").value;
+let t=document.getElementById("to").value;
+
+let data=JSON.parse(localStorage.getItem("orders")||"[]");
+data.push({f,t});
+localStorage.setItem("orders",JSON.stringify(data));
+
+alert("Comandă salvată!");
+closeM();
+}
+
+/* TRACK */
+function track(){
+let c=document.getElementById("code").value;
+document.getElementById("result").innerText=
+c.length>3?"În tranzit 🚚":"Cod invalid";
+}
+
+/* PRICE */
+function price(){
+let kg=document.getElementById("kg").value;
+document.getElementById("priceOut").innerText="Preț: "+(kg*9)+" lei";
+}
+
+/* FAQ */
+function faq(el){
+let ans=el.nextElementSibling;
+ans.style.display=ans.style.display==="block"?"none":"block";
+}
+
+/* LOGIN ADMIN */
+function login(){
+let p=prompt("Parolă:");
+if(p==="1234"){
+document.getElementById("admin").style.display="block";
+load();
+}
+}
+
+/* LOAD ORDERS */
+function load(){
+let list=document.getElementById("orders");
+list.innerHTML="";
+let data=JSON.parse(localStorage.getItem("orders")||"[]");
+
+data.forEach(o=>{
+let tr=document.createElement("tr");
+tr.innerHTML=`<td>Client</td><td>${o.f} ➝ ${o.t}</td>`;
+list.appendChild(tr);
+});
+}
+
+/* SEND CONTACT */
+function send(){
+alert("Mesaj trimis!");
+}
+
+</script>
 
 </body>
 </html>

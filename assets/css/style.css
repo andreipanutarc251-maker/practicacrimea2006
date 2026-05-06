@@ -1,0 +1,202 @@
+/* ================= SCROLLBAR CUSTOM ================= */
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-track{
+background:#f1f1f1;
+}
+
+::-webkit-scrollbar-thumb{
+background:var(--primary);
+border-radius:10px;
+}
+
+/* ================= GLASS EFFECT ================= */
+.glass{
+background:rgba(255,255,255,0.2);
+backdrop-filter:blur(10px);
+border-radius:12px;
+box-shadow:var(--shadow);
+}
+
+/* ================= GRADIENT TEXT ================= */
+.gradient-text{
+background:linear-gradient(90deg,var(--primary),var(--secondary));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+/* ================= FLOATING BUTTON ================= */
+.floating-btn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:var(--primary);
+color:white;
+padding:12px 15px;
+border-radius:50%;
+font-size:20px;
+box-shadow:var(--shadow);
+cursor:pointer;
+z-index:999;
+transition:0.3s;
+}
+
+.floating-btn:hover{
+transform:scale(1.1);
+}
+
+/* ================= LOADER ================= */
+.loader{
+border:5px solid #eee;
+border-top:5px solid var(--primary);
+border-radius:50%;
+width:40px;
+height:40px;
+animation:spin 1s linear infinite;
+margin:auto;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg)}
+100%{transform:rotate(360deg)}
+}
+
+/* ================= BADGES ================= */
+.badge{
+display:inline-block;
+padding:5px 10px;
+background:var(--secondary);
+color:white;
+border-radius:20px;
+font-size:12px;
+}
+
+/* ================= HOVER CARD EFFECT ================= */
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+transition:0.3s;
+}
+
+.card:hover img{
+transform:scale(1.05);
+}
+
+/* ================= TOOLTIP ================= */
+.tooltip{
+position:relative;
+cursor:pointer;
+}
+
+.tooltip::after{
+content:attr(data-text);
+position:absolute;
+bottom:120%;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+color:white;
+padding:5px 10px;
+border-radius:6px;
+font-size:12px;
+opacity:0;
+pointer-events:none;
+transition:0.3s;
+}
+
+.tooltip:hover::after{
+opacity:1;
+}
+
+/* ================= PROGRESS BAR ================= */
+.progress{
+width:100%;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+height:10px;
+}
+
+.progress-bar{
+height:100%;
+background:var(--primary);
+width:70%;
+}
+
+/* ================= NOTIFICATION ================= */
+.notification{
+position:fixed;
+top:20px;
+right:20px;
+background:var(--primary);
+color:white;
+padding:15px;
+border-radius:10px;
+box-shadow:var(--shadow);
+display:none;
+}
+
+/* ================= IMAGE HOVER ZOOM ================= */
+.zoom{
+overflow:hidden;
+border-radius:10px;
+}
+
+.zoom img{
+width:100%;
+transition:0.4s;
+}
+
+.zoom:hover img{
+transform:scale(1.1);
+}
+
+/* ================= BUTTON RIPPLE EFFECT ================= */
+button{
+position:relative;
+overflow:hidden;
+}
+
+button::after{
+content:"";
+position:absolute;
+width:0;
+height:0;
+background:rgba(255,255,255,0.5);
+border-radius:50%;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+transition:0.4s;
+}
+
+button:active::after{
+width:200px;
+height:200px;
+opacity:0;
+}
+
+/* ================= SECTION DIVIDER ================= */
+.divider{
+height:4px;
+width:60px;
+background:var(--primary);
+margin:10px auto 30px;
+border-radius:5px;
+}
+
+/* ================= STICKY BUTTON ================= */
+.scroll-top{
+position:fixed;
+bottom:80px;
+right:20px;
+background:var(--secondary);
+color:white;
+padding:10px;
+border-radius:50%;
+display:none;
+cursor:pointer;
+}

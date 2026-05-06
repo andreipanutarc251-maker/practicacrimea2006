@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastCourier PRO MAX</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0b1220;color:#fff;transition:0.3s}
+
+/* HEADER */
+header{
+display:flex;justify-content:space-between;align-items:center;
+padding:15px 20px;background:#0f172a;position:sticky;top:0;z-index:999
+}
+nav a{color:white;margin:0 8px;text-decoration:none}
+nav a:hover{color:#38bdf8}
+
+button{cursor:pointer;border:none;border-radius:6px;padding:8px 12px}
+
+/* HERO */
+.hero{
+height:70vh;display:flex;flex-direction:column;
+justify-content:center;align-items:center;text-align:center;
+background:linear-gradient(120deg,#2563eb,#06b6d4)
+}
+.hero h1{font-size:42px}
+
+/* CARDS */
+.cards{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;padding:20px}
+.card{width:220px;background:#1e293b;padding:15px;border-radius:10px;text-align:center;transition:0.3s}
+.card:hover{transform:translateY(-5px)}
+.card img{width:100%;height:120px;object-fit:cover;border-radius:10px}
+
+/* FORM */
+input,textarea{width:100%;padding:10px;margin:5px 0;border-radius:5px;border:none}
+
+/* MODAL */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa}
+.modal-content{background:#fff;color:#000;width:300px;margin:10% auto;padding:20px;border-radius:10px}
+
+/* ADMIN */
+#admin{display:none;padding:20px;background:#111827}
+
+/* TOAST */
+.toast{
+position:fixed;bottom:20px;right:20px;background:#111;padding:10px 15px;border-radius:6px
+}
+
+/* TRACK */
+.step{padding:5px;margin:5px;background:#1e293b;border-radius:5px}
+.active{background:#22c55e}
+</style>
+</head>
+<body>
+
+<header>
+<h3>🚚 FastCourier PRO MAX</h3>
+<nav>
+<a href="#s">Servicii</a>
+<a href="#t">Tracking</a>
+<a href="#c">Contact</a>
+</nav>
+<div>
+<button onclick="toggleDark()">🌙</button>
+<button onclick="login()">Admin</button>
+</div>
+</header>
+
+<div class="hero">
+<h1>Livrare inteligentă</h1>
+<p>Next-gen courier system</p>
+<button onclick="openModal()">Comandă</button>
+</div>
+
+<section id="s" class="cards">
+<div class="card"><img src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc"><p>Rapid</p></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d"><p>Sigur</p></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1580674285054-bed31e145f59"><p>Tracking</p></div>
+</section>
+
+<section id="t" style="padding:20px;text-align:center">
+<h2>Tracking LIVE</h2>
+<input id="code" placeholder="Cod colet">
+<button onclick="track()">Verifică</button>
+<div id="steps"></div>
+</section>
+
+<section id="c" style="padding:20px">
+<h2>Contact</h2>
+<input id="email" placeholder="Email">
+<textarea placeholder="Mesaj"></textarea>
+<button onclick="send()">Trimite</button>
+</section>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-content">
+<h3>Comandă</h3>
+<input id="from" placeholder="De la">
+<input id="to" placeholder="Către">
+<button onclick="save()">Salvează</button>
+<button onclick="closeModal()">X</button>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin">
+<h2>ADMIN PANEL</h2>
+<div id="orders"></div>
+</div>
+
+<script>
+let status=["Preluat","În depozit","În drum","Livrat"];
+
+function toast(msg){
+let t=document.createElement("div");
+t.className="toast";
+t.innerText=msg;
+document.body.appendChild(t);
+setTimeout(()=>t.remove(),2000);
+}
+
+function toggleDark(){document.body.classList.toggle("dark")}
+
+function openModal(){document.getElementById("modal").style.display="block"}
+function closeModal(){document.getElementById("modal").style.display="none"}
+
+function save(){
+let f=document.getElementById("from").value;
+let t=document.getElementById("to").value;
+let data=JSON.parse(localStorage.getItem("orders")||"[]");
+data.push({f,t,st:0});
+localStorage.setItem("orders",JSON.stringify(data));
+toast("Comandă salvată");
+closeModal();
+}
+
+function track(){
+let c=document.getElementById("code").value;
+let i=Math.floor(Math.random()*status.length);
+let html="";
+status.forEach((s,index)=>{
+html+=`<div class='step ${index<=i?"active":""}'>${s}</div>`
+})
+document.getElementById("steps").innerHTML=html;
+}
+
+function send(){
+let e=document.getElementById("email").value;
+if(!e.includes("@"))return toast("Email invalid");
+toast("Trimis")
+}
+
+function login(){
+let p=prompt("Parolă admin:");
+if(p=="1234"){
+document.getElementById("admin").style.display="block";
+load();
+}
+}
+
+function load(){
+let d=JSON.parse(localStorage.getItem("orders")||"[]");
+let html="";
+d.forEach(o=>{
+html+=`<p>📦 ${o.f} ➝ ${o.t}</p>`
+})
+document.getElementById("orders").innerHTML=html;
+}
+</script>
+
+</body>
+</html>
