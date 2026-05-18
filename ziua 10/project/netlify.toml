@@ -1,0 +1,133 @@
+# ============================================================================
+# 🔒 NETLIFY CONFIGURATION - ENTERPRISE SECURITY & DEPLOYMENT
+# Live Deployment & Security Headers Configured by: Student Name | Data: 15.05.2026
+# ============================================================================
+ 
+# ============================================================================
+# 1️⃣  REDIRECȚIONARE FORȚATĂ HTTP → HTTPS (301 Moved Permanently)
+# ============================================================================
+# Orice request HTTP este redirecționat la HTTPS cu status 301 (permanent)
+[[redirects]]
+  from = "http://*"
+  to = "https://:splat"
+  status = 301
+  force = true
+ 
+# ============================================================================
+# 2️⃣  ANTETELE DE SECURITATE LA NIVEL DE EDGE
+# ============================================================================
+# Acestea se aplică la TOATE ruta/urile din site (/*) 
+[[headers]]
+  for = "/*"
+  
+  [headers.values]
+    # ────────────────────────────────────────────────────────────────────
+    # 🛡️ PROTECȚIA ÎMPOTRIVA CLICKJACKING (Încadrare în iFrame)
+    # ────────────────────────────────────────────────────────────────────
+    X-Frame-Options = "DENY"
+    # DENY = Site-ul NU poate fi încadrat în niciun iFrame (nici pe același domeniu)
+    # Alternativele: SAMEORIGIN (permite doar pe același domeniu), ALLOWALL (nesigur)
+    
+    # ────────────────────────────────────────────────────────────────────
+    # 🛡️ PREVENIREA MIME SNIFFING (Analizarea tipului de fișier de browser)
+    # ────────────────────────────────────────────────────────────────────
+    X-Content-Type-Options = "nosniff"
+    # Forțează browserul să respecte Content-Type declarat (ex: text/javascript)
+    # Previne atacuri unde un fișier .jpg ar putea fi executat ca .js
+    
+    # ────────────────────────────────────────────────────────────────────
+    # 🛡️ FILTRUL XSS LA NIVELUL BROWSERULUI (Browserele mai vechi)
+    # ────────────────────────────────────────────────────────────────────
+    X-XSS-Protection = "1; mode=block"
+    # 1 = Activează filtrul XSS
+    # mode=block = Blochează pagina dacă se detectează XSS (nu o randează parțial)
+    
+    # ────────────────────────────────────────────────────────────────────
+    # 🛡️ HSTS (HTTP Strict Transport Security) - FORȚEAZĂ HTTPS
+    # ────────────────────────────────────────────────────────────────────
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # max-age=31536000 = 1 an - browserul va folosi HTTPS pentru acest timp
+    # includeSubDomains = Se aplică și la subdomenii (www, api, etc.)
+    # preload = Site-ul este adăugat în lista de preincărcare HSTS a Chrome/Firefox
+    # ⚠️  ATENȚIE: Odată activată, nu poți dezactiva pentru 1 an complet!
+    
+    # ────────────────────────────────────────────────────────────────────
+    # 🛡️ CONTENT SECURITY POLICY (CSP) - PREVINE INJECȚII DE SCRIPTURI
+    # ────────────────────────────────────────────────────────────────────
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self'; font-src 'self' https://cdnjs.cloudflare.com"
+    
+    # 🔹 default-src 'self' 
+    #    = Toate resursele trebuie să provin de la același domeniu
+    #
+    # 🔹 script-src 'self' 'unsafe-inline'
+    #    = Scripturi doar de pe site propriu + scripturi inline în HTML
+    #    = 'unsafe-inline' permite <script>code</script> - NECESITAR pentru proiecte simple
+    #
+    # 🔹 style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com
+    #    = CSS-uri locale + inline styles + CDN Cloudflare
+    #
+    # 🔹 img-src 'self' data: https:
+    #    = Imagini locale + data URIs (imagini embedded ca base64) + HTTPS
+    #
+    # 🔹 connect-src 'self'
+    #    = Conexiuni AJAX/WebSocket doar la același domeniu (API calls)
+    #
+    # 🔹 font-src 'self' https://cdnjs.cloudflare.com
+    #    = Font-uri locale + de pe CDN-ul Cloudflare
+    
+    # ────────────────────────────────────────────────────────────────────
+    # 🛡️ REFERRER POLICY - CONTROLUL INFORMAȚIEI DESPRE SURSĂ
+    # ────────────────────────────────────────────────────────────────────
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # strict-origin-when-cross-origin = Trimite doar originea (https://site.com) la alte site-uri
+    # Previne scurgerea de informații privat în URL-uri (query parameters, path-uri)
+ 
+# ============================================================================
+# 3️⃣  CONFIGURAREA FALLBACK PENTRU 404 (Pagini inexistente)
+# ============================================================================
+# Dacă utilizatorul accesează o pagină inexistentă (ex: /non-existent),
+# serverul returnează 404.html fără a schimba URL-ul din browser
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+ 
+# ============================================================================
+# 4️⃣  BUILD & DEPLOYMENT SETTINGS
+# ============================================================================
+[build]
+  # Directorul care conține fișierele gata pentru publicare (build output)
+  publish = "dist"
+  
+  # Comanda care va fi executată pentru a construi site-ul
+  command = "npm run build"
+  
+  # Directorul sursă (unde sunt fișierele tale HTML/CSS/JS originale)
+  base = "."
+ 
+# ============================================================================
+# 5️⃣  CACHE CONTROL (Optimizarea performanței)
+# ============================================================================
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    # Cache agresiv pentru resurse statice (imagini, CSS, JS minificat)
+    Cache-Control = "public, max-age=31536000, immutable"
+ 
+[[headers]]
+  for = "/"
+  [headers.values]
+    # HTML index nu trebuie să fie cache-at - ar putea fi actualizat
+    Cache-Control = "public, max-age=3600, must-revalidate"
+ 
+# ============================================================================
+# 🎯 EXPLICAȚIE FINALĂ
+# ============================================================================
+# Acest fișier creează o infrastructură de nivel Enterprise care:
+# 1. ✅ Forțează HTTPS la nivel de edge (CDN)
+# 2. ✅ Blochează atacurile de XSS, Clickjacking și MIME Sniffing
+# 3. ✅ Controlează ce resurse pot fi încărcate în pagină (CSP)
+# 4. ✅ Gestionează redirecționări și fallback-uri corect
+# 5. ✅ Optimizează cache-ul pentru performanță maximă
+# ============================================================================
+ 
