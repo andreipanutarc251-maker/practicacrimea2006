@@ -1,384 +1,3972 @@
 <!DOCTYPE html>
+<!-- FastCourier PRO MAX ULTIMATE v2.0 — Enhanced Edition -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FastCourier Pro</title>
-
+<title>FastCourier PRO MAX ULTIMATE v2</title>
+ 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ 
 <style>
-
-/* ================= RESET ================= */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-
-/* ================= HEADER ================= */
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 25px;
-background:#0f172a;
-color:white;
-position:sticky;
-top:0;
-z-index:1000;
+/* =========================================== */
+/* CSS VARIABLES & THEMES                      */
+/* =========================================== */
+:root {
+  --bg:        #0e1936;
+  --surface:   #111d3d;
+  --surface2:  #1a2b52;
+  --accent:    #38bdf8;
+  --accent2:   #f59e0b;
+  --green:     #22c55e;
+  --red:       #ef4444;
+  --purple:    #a855f7;
+  --pink:      #ec4899;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --border:    rgba(56,189,248,.18);
+  --radius:    14px;
+  --tr:        .25s cubic-bezier(.4,0,.2,1);
+  --shadow:    0 8px 32px rgba(0,0,0,.35);
+  --glow:      0 0 20px rgba(56,189,248,.25);
 }
-
-nav a{
-color:white;
-margin:0 10px;
-text-decoration:none;
-transition:0.3s;
+body.theme-blue  { --bg:#0c2a3e; --surface:#0e3550; --surface2:#144166; --accent:#38bdf8; }
+body.theme-green { --bg:#0a1f14; --surface:#102a1a; --surface2:#163823; --accent:#22c55e; --accent2:#84cc16; }
+body.theme-red   { --bg:#1a0a0a; --surface:#2a1010; --surface2:#381616; --accent:#f87171; --accent2:#fbbf24; }
+body.theme-purple{ --bg:#120a1f; --surface:#1e1038; --surface2:#2a1850; --accent:#a855f7; --accent2:#ec4899; }
+body.theme-light { --bg:#f1f5f9; --surface:#ffffff; --surface2:#e2e8f0; --accent:#0ea5e9; --text:#111827; --muted:#6b7280; --border:rgba(14,165,233,.2); --shadow:0 8px 32px rgba(0,0,0,.1); }
+body.theme-cyber { --bg:#000510; --surface:#001020; --surface2:#001830; --accent:#00ff88; --accent2:#ff6600; --text:#ccffee; --border:rgba(0,255,136,.2); }
+body.theme-sunset{ --bg:#1a0a05; --surface:#2a1508; --surface2:#3a200d; --accent:#f97316; --accent2:#eab308; --border:rgba(249,115,22,.2); }
+ 
+/* =========================================== */
+/* RESET & BASE                                */
+/* =========================================== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  transition:background .4s, color .4s;
 }
-
-nav a:hover{color:#38bdf8}
-
-/* ================= HERO ================= */
-.hero{
-height:70vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-background:linear-gradient(120deg,#2563eb,#06b6d4);
-color:white;
+:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
-
-.hero h1{font-size:40px;margin-bottom:10px}
-.hero button{
-padding:10px 20px;
-border:none;
-background:#111;
-color:white;
-cursor:pointer;
-margin-top:15px;
-border-radius:5px;
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+ 
+/* Skip Link */
+.skip-link {
+  position:absolute; top:-999px; left:1rem;
+  padding:.5rem 1.2rem; background:var(--accent); color:#000;
+  font-weight:700; border-radius:8px; z-index:99999;
+  transition:top var(--tr);
 }
-
-/* ================= SECTIONS ================= */
-section{padding:50px 20px}
-
-.title{text-align:center;font-size:28px;margin-bottom:20px}
-
-/* ================= CARDS ================= */
-.cards{
-display:flex;
-flex-wrap:wrap;
-gap:15px;
-justify-content:center;
+.skip-link:focus { top:1rem; }
+ 
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--surface); }
+::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+ 
+/* =========================================== */
+/* LOADER                                      */
+/* =========================================== */
+#loader {
+  position:fixed; inset:0; background:var(--bg);
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  gap:1.5rem; z-index:99998;
+  transition:opacity .5s;
 }
-
-.card{
-width:250px;
-padding:15px;
-background:#f1f5f9;
-border-radius:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-transition:0.3s;
+.loader-logo {
+  font-family:'Syne',sans-serif;
+  font-size:2.5rem; font-weight:800;
+  color:var(--accent);
+  letter-spacing:.06em;
+  animation: pulse 1.5s ease-in-out infinite;
 }
-
-.card:hover{transform:translateY(-5px)}
-
-/* ================= FORMS ================= */
-input,textarea{
-width:100%;
-padding:10px;
-margin:5px 0;
-border:1px solid #ccc;
-border-radius:5px;
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+.loader-spinner {
+  width:50px; height:50px;
+  border:3px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
 }
-
-button{
-padding:10px 15px;
-border:none;
-cursor:pointer;
-background:#0f172a;
-color:white;
-border-radius:5px;
+.loader-bar {
+  width:200px; height:4px;
+  background:var(--surface2); border-radius:4px; overflow:hidden;
 }
-
-/* ================= TRACKING ================= */
-.trackBox{
-text-align:center;
+.loader-bar-fill {
+  height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius:4px; animation: loadBar 1.4s ease-in-out;
 }
-
-#result{
-margin-top:10px;
-font-weight:bold;
+@keyframes loadBar { from{width:0%} to{width:100%} }
+.loader-text { font-size:.85rem; color:var(--muted); }
+@keyframes spin { to { transform:rotate(360deg); } }
+ 
+/* =========================================== */
+/* PARTICLES BACKGROUND                        */
+/* =========================================== */
+#particles {
+  position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
 }
-
-/* ================= FAQ ================= */
-.faq{
-background:#e2e8f0;
-padding:10px;
-margin:5px;
-cursor:pointer;
-border-radius:5px;
+.particle {
+  position:absolute; border-radius:50%;
+  background:var(--accent); opacity:.08;
+  animation: floatParticle linear infinite;
 }
-
-.answer{
-display:none;
-padding:10px;
-background:#f8fafc;
+@keyframes floatParticle {
+  0%   { transform:translateY(100vh) translateX(0) scale(0); opacity:0; }
+  10%  { opacity:.08; }
+  90%  { opacity:.08; }
+  100% { transform:translateY(-100px) translateX(var(--drift)) scale(1); opacity:0; }
 }
-
-/* ================= FOOTER ================= */
-footer{
-background:#0f172a;
-color:white;
-text-align:center;
-padding:20px;
-margin-top:20px;
+ 
+/* =========================================== */
+/* AUTH                                        */
+/* =========================================== */
+#auth {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.9);
+  display:flex; justify-content:center; align-items:center;
+  z-index:9999; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
 }
-
-/* ================= DARK MODE ================= */
-.dark{
-background:#0b1220;
-color:white;
+.auth-box {
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:2.5rem; border-radius:20px;
+  width:380px; text-align:center;
+  animation:fadeUp .5s both;
+  box-shadow:var(--shadow);
+  position:relative; overflow:hidden;
 }
-
-.dark .card{background:#1e293b;color:white}
-.dark .faq{background:#1e293b}
-.dark .answer{background:#0f172a}
-
-/* ================= MODAL ================= */
-.modal{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.6);
+.auth-box::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--accent), var(--accent2), var(--purple));
 }
-
-.modal-content{
-background:white;
-width:300px;
-margin:10% auto;
-padding:20px;
-border-radius:10px;
+.auth-box h2 {
+  font-family:'Syne',sans-serif;
+  font-size:1.6rem; margin-bottom:1.5rem;
+  color:var(--accent);
 }
-
-/* ================= ADMIN ================= */
-#admin{
-display:none;
-padding:20px;
-background:#111827;
-color:white;
+.auth-tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; }
+.auth-tab {
+  flex:1; padding:.65rem;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; color:var(--muted);
+  font-weight:600; font-family:inherit;
+  cursor:pointer; transition:all var(--tr);
 }
-
-table{
-width:100%;
-border-collapse:collapse;
+.auth-tab.active {
+  background:var(--accent); color:#000; border-color:var(--accent);
 }
-
-td,th{
-border:1px solid #444;
-padding:8px;
+.auth-error {
+  color:var(--red); font-size:.85rem;
+  margin-top:.5rem; min-height:1.2rem;
 }
-
-/* ================= ANIMATION ================= */
-.fade{
-animation:fadeIn 1s ease;
+.auth-strength {
+  display:flex; gap:4px; margin-top:.4rem;
 }
-
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
+.strength-bar {
+  flex:1; height:4px; border-radius:2px;
+  background:var(--surface2); transition:background .3s;
 }
-
+.strength-bar.weak   { background:var(--red); }
+.strength-bar.medium { background:var(--accent2); }
+.strength-bar.strong { background:var(--green); }
+ 
+/* =========================================== */
+/* INPUTS & BUTTONS                            */
+/* =========================================== */
+input, select, textarea {
+  width:100%; padding:12px 14px;
+  margin:6px 0; border:1.5px solid var(--border);
+  border-radius:10px; background:var(--surface2);
+  color:var(--text); font-family:inherit; font-size:.95rem;
+  transition:border-color var(--tr), box-shadow var(--tr);
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(56,189,248,.15);
+  outline:none;
+}
+select option { background:var(--surface); }
+label { font-size:.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:.2rem; }
+ 
+.btn {
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:10px 18px; border:none; border-radius:10px;
+  background:var(--accent); color:#000;
+  font-weight:700; font-family:inherit; font-size:.9rem;
+  cursor:pointer; transition:transform var(--tr), box-shadow var(--tr), background var(--tr);
+  white-space:nowrap;
+}
+.btn:hover { transform:translateY(-2px); box-shadow:var(--glow); }
+.btn:active { transform:translateY(0); }
+.btn-sm { padding:7px 12px; font-size:.82rem; border-radius:8px; }
+.btn-xs { padding:5px 9px; font-size:.76rem; border-radius:6px; }
+.btn-ghost {
+  background:transparent; border:1.5px solid var(--border);
+  color:var(--text);
+}
+.btn-ghost:hover { border-color:var(--accent); color:var(--accent); box-shadow:none; }
+.btn-danger { background:var(--red); color:#fff; }
+.btn-danger:hover { box-shadow:0 6px 20px rgba(239,68,68,.35); }
+.btn-success { background:var(--green); color:#000; }
+.btn-success:hover { box-shadow:0 6px 20px rgba(34,197,94,.35); }
+.btn-purple { background:var(--purple); color:#fff; }
+.btn-purple:hover { box-shadow:0 6px 20px rgba(168,85,247,.35); }
+.btn-full { width:100%; justify-content:center; }
+ 
+/* =========================================== */
+/* HEADER / NAV                                */
+/* =========================================== */
+header {
+  position:sticky; top:0; z-index:200;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.9rem 1.5rem;
+  background:rgba(9,12,20,.94);
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap; gap:.75rem;
+  transition:padding .3s;
+}
+header.scrolled { padding:.65rem 1.5rem; }
+.logo {
+  font-family:'Syne',sans-serif;
+  font-size:1.3rem; font-weight:800;
+  color:var(--accent); text-decoration:none;
+  letter-spacing:.04em;
+  display:flex; align-items:center; gap:.5rem;
+}
+.logo-badge {
+  font-size:.6rem; background:var(--accent2); color:#000;
+  padding:.1rem .4rem; border-radius:4px; font-weight:800;
+  letter-spacing:.05em;
+}
+.header-meta {
+  display:flex; align-items:center; gap:1rem;
+  font-size:.84rem; color:var(--muted);
+  flex-wrap:wrap;
+}
+.header-meta span { display:flex; align-items:center; gap:.3rem; }
+#netStatus { font-weight:600; }
+ 
+.header-actions { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+ 
+/* Hamburger */
+.menu-btn {
+  display:none; flex-direction:column;
+  justify-content:center; gap:5px;
+  background:transparent; border:1.5px solid var(--border);
+  border-radius:8px; padding:.5rem .6rem; cursor:pointer;
+  transition:border-color var(--tr);
+}
+.menu-btn:hover { border-color:var(--accent); }
+.icon-bar {
+  display:block; width:22px; height:2px;
+  background:var(--text); border-radius:2px;
+  transition:transform var(--tr), opacity var(--tr);
+}
+.menu-btn[aria-expanded="true"] .icon-bar:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.menu-btn[aria-expanded="true"] .icon-bar:nth-child(2) { opacity:0; }
+.menu-btn[aria-expanded="true"] .icon-bar:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+ 
+nav[role="navigation"] {
+  display:flex; align-items:center; gap:.15rem;
+}
+nav[role="navigation"] a {
+  color:var(--muted); text-decoration:none;
+  padding:.4rem .7rem; border-radius:8px; font-size:.88rem; font-weight:500;
+  transition:color var(--tr), background var(--tr);
+  white-space:nowrap;
+}
+nav[role="navigation"] a:hover { color:var(--text); background:var(--surface2); }
+nav[role="navigation"] a.active-link { color:var(--accent); background:rgba(56,189,248,.1); }
+ 
+/* Notification bell */
+.notif-bell-btn {
+  position:relative; background:transparent;
+  border:1.5px solid var(--border); border-radius:10px;
+  color:var(--text); width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:.95rem;
+  transition:border-color var(--tr), color var(--tr);
+}
+.notif-bell-btn:hover { border-color:var(--accent); color:var(--accent); }
+.notif-count {
+  position:absolute; top:-5px; right:-5px;
+  background:var(--red); color:#fff; font-size:.65rem;
+  font-weight:800; min-width:17px; height:17px;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:2px solid var(--bg);
+}
+ 
+/* Theme selector */
+.theme-row { display:flex; gap:.3rem; }
+.theme-dot {
+  width:20px; height:20px; border-radius:50%;
+  border:2px solid transparent; cursor:pointer;
+  transition:transform var(--tr), border-color var(--tr);
+}
+.theme-dot:hover, .theme-dot:focus-visible { transform:scale(1.25); border-color:var(--text); }
+.td-default { background:linear-gradient(135deg,#090c14,#38bdf8); }
+.td-blue    { background:linear-gradient(135deg,#0c2a3e,#38bdf8); }
+.td-green   { background:linear-gradient(135deg,#0a1f14,#22c55e); }
+.td-red     { background:linear-gradient(135deg,#1a0a0a,#f87171); }
+.td-purple  { background:linear-gradient(135deg,#120a1f,#a855f7); }
+.td-light   { background:linear-gradient(135deg,#f1f5f9,#0ea5e9); }
+.td-cyber   { background:linear-gradient(135deg,#000510,#00ff88); }
+.td-sunset  { background:linear-gradient(135deg,#1a0a05,#f97316); }
+ 
+@media(max-width:900px) {
+  .menu-btn { display:flex; }
+  nav[role="navigation"].nav-links {
+    display:none; position:absolute; top:100%; left:0; right:0;
+    flex-direction:column; background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:1rem 1.5rem; gap:.25rem; z-index:100;
+  }
+  nav[role="navigation"].nav-links.open { display:flex; }
+  .header-meta { display:none; }
+}
+ 
+/* =========================================== */
+/* LAYOUT                                      */
+/* =========================================== */
+.container { max-width:1200px; margin:0 auto; padding:0 1.5rem; }
+section { padding:3rem 0; position:relative; }
+ 
+/* =========================================== */
+/* HERO                                        */
+/* =========================================== */
+#hero {
+  padding:5rem 1.5rem 4rem;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(56,189,248,.1) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(245,158,11,.06) 0%, transparent 60%);
+  animation:fadeUp .8s both;
+  position:relative; overflow:hidden;
+}
+#hero::before {
+  content:'';
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:600px; height:600px;
+  background:radial-gradient(circle, rgba(56,189,248,.04) 0%, transparent 70%);
+  pointer-events:none;
+}
+h1 {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.2rem,6vw,4.5rem);
+  font-weight:800; line-height:1.1;
+  margin-bottom:1rem;
+  background:linear-gradient(135deg, var(--accent), var(--accent2), var(--purple));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  background-size:200% auto;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+.hero-sub { font-size:1.1rem; color:var(--muted); max-width:600px; margin:0 auto 1rem; line-height:1.7; }
+.hero-fact {
+  font-size:.9rem; color:var(--accent); font-weight:500;
+  min-height:1.4rem; transition:opacity .3s;
+}
+.hero-btns { display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; margin-top:1.8rem; }
+.hero-version {
+  display:inline-block; margin-top:1rem;
+  font-size:.75rem; padding:.25rem .8rem;
+  background:rgba(56,189,248,.1); border:1px solid rgba(56,189,248,.2);
+  border-radius:50px; color:var(--accent); font-weight:600;
+}
+ 
+/* Stats bar */
+.stats-bar {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1rem; margin:2rem 0;
+}
+.stat-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.2rem 1.5rem;
+  text-align:center;
+  transition:transform var(--tr), border-color var(--tr), box-shadow var(--tr);
+  position:relative; overflow:hidden;
+}
+.stat-card::after {
+  content:''; position:absolute;
+  bottom:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .3s;
+}
+.stat-card:hover { transform:translateY(-4px); border-color:var(--accent); box-shadow:var(--glow); }
+.stat-card:hover::after { transform:scaleX(1); }
+.stat-val {
+  font-family:'Syne',sans-serif;
+  font-size:2.2rem; font-weight:800;
+  color:var(--accent); display:block;
+  transition:transform .3s;
+}
+.stat-card:hover .stat-val { transform:scale(1.1); }
+.stat-lbl { font-size:.78rem; color:var(--muted); margin-top:.2rem; }
+.stat-icon { font-size:1.2rem; margin-bottom:.3rem; }
+ 
+/* =========================================== */
+/* SECTION HEADINGS                            */
+/* =========================================== */
+h2 {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.4rem,3vw,2rem);
+  font-weight:700; margin-bottom:1rem;
+  color:var(--text);
+  display:flex; align-items:center; gap:.6rem;
+}
+h3 {
+  font-family:'Syne',sans-serif;
+  font-size:1.05rem; font-weight:700;
+  color:var(--accent); margin-bottom:.5rem;
+}
+.section-badge {
+  font-size:.7rem; padding:.2rem .6rem;
+  background:rgba(56,189,248,.15); border:1px solid rgba(56,189,248,.25);
+  border-radius:50px; color:var(--accent); font-weight:700;
+  font-family:'DM Sans',sans-serif; letter-spacing:.05em;
+}
+ 
+/* =========================================== */
+/* CARDS                                       */
+/* =========================================== */
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.25rem; }
+.card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  transition:transform var(--tr), border-color var(--tr), box-shadow var(--tr);
+}
+.card:hover { transform:translateY(-3px); border-color:var(--accent); box-shadow:var(--glow); }
+.card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+ 
+/* =========================================== */
+/* SERVICES                                    */
+/* =========================================== */
+#servicii { background:var(--surface); }
+.services {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1rem; margin-top:1rem;
+}
+.service {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.5rem; text-align:center;
+  transition:transform var(--tr), box-shadow var(--tr), border-color var(--tr);
+  position:relative; overflow:hidden;
+}
+.service::before {
+  content:''; position:absolute;
+  top:-50%; left:-50%; width:200%; height:200%;
+  background:radial-gradient(circle, rgba(56,189,248,.06) 0%, transparent 60%);
+  opacity:0; transition:opacity .4s;
+}
+.service:hover { transform:scale(1.03); box-shadow:var(--glow); border-color:var(--accent); }
+.service:hover::before { opacity:1; }
+.svc-icon { font-size:2.5rem; margin-bottom:.8rem; display:block; transition:transform .3s; }
+.service:hover .svc-icon { transform:scale(1.15) rotate(5deg); }
+.svc-tag {
+  display:inline-block; font-size:.7rem; padding:.2rem .5rem;
+  background:rgba(56,189,248,.1); border-radius:4px;
+  color:var(--accent); margin-top:.5rem; font-weight:600;
+}
+ 
+/* =========================================== */
+/* ADD ORDER                                   */
+/* =========================================== */
+#adauga { background:var(--bg); }
+.add-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.add-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; }
+@media(max-width:700px) { .add-grid,.add-grid-3 { grid-template-columns:1fr; } }
+ 
+/* Priority selector */
+.priority-row { display:flex; gap:.5rem; margin:6px 0; }
+.priority-btn {
+  flex:1; padding:.5rem; border-radius:8px;
+  border:1.5px solid var(--border); background:var(--surface2);
+  color:var(--muted); font-size:.8rem; font-weight:700;
+  cursor:pointer; transition:all var(--tr); text-align:center;
+}
+.priority-btn.active-low    { background:rgba(34,197,94,.2);   border-color:var(--green);   color:var(--green); }
+.priority-btn.active-medium { background:rgba(245,158,11,.2);  border-color:var(--accent2); color:var(--accent2); }
+.priority-btn.active-high   { background:rgba(239,68,68,.2);   border-color:var(--red);     color:var(--red); }
+ 
+/* Bulk actions bar */
+.bulk-bar {
+  display:none; align-items:center; gap:.75rem;
+  padding:.75rem 1.25rem;
+  background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.2);
+  border-radius:var(--radius); margin-bottom:1rem;
+  animation:fadeUp .3s both;
+}
+.bulk-bar.visible { display:flex; }
+.bulk-count { font-weight:700; color:var(--accent); }
+ 
+/* =========================================== */
+/* FILTERS & TABLE                             */
+/* =========================================== */
+.filters {
+  display:flex; gap:.75rem; flex-wrap:wrap;
+  align-items:center; margin-bottom:1.25rem;
+}
+.filters input, .filters select { margin:0; }
+ 
+#comenzi { background:var(--surface); }
+.table-wrap { overflow-x:auto; border-radius:var(--radius); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; }
+thead { background:var(--surface2); }
+th {
+  padding:12px 16px; text-align:left;
+  font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+  white-space:nowrap; cursor:pointer; -webkit-user-select:none; user-select:none;
+}
+th:hover { color:var(--accent); }
+th .sort-icon { margin-left:.3rem; opacity:.4; }
+th.sort-asc .sort-icon, th.sort-desc .sort-icon { opacity:1; color:var(--accent); }
+td { padding:13px 16px; border-top:1px solid var(--border); vertical-align:middle; }
+tr { transition:background var(--tr); }
+tr:hover td { background:rgba(56,189,248,.04); }
+.row-selected td { background:rgba(56,189,248,.08) !important; }
+ 
+.status-badge {
+  display:inline-flex; align-items:center; gap:.3rem;
+  padding:.25rem .75rem;
+  border-radius:50px; font-size:.78rem; font-weight:700;
+}
+.s-procesat { background:rgba(245,158,11,.15); color:#f59e0b; }
+.s-drum     { background:rgba(56,189,248,.15);  color:#38bdf8; }
+.s-livrat   { background:rgba(34,197,94,.15);   color:#22c55e; }
+.s-anulat   { background:rgba(239,68,68,.15);   color:#ef4444; }
+.priority-badge {
+  display:inline-block; padding:.15rem .5rem;
+  border-radius:4px; font-size:.72rem; font-weight:700;
+}
+.p-low    { background:rgba(34,197,94,.15);  color:var(--green); }
+.p-medium { background:rgba(245,158,11,.15); color:var(--accent2); }
+.p-high   { background:rgba(239,68,68,.15);  color:var(--red); }
+ 
+.awb-code { font-family:monospace; font-size:.83rem; color:var(--muted); }
+.actions-cell { display:flex; gap:.3rem; flex-wrap:nowrap; }
+.table-footer {
+  display:flex; gap:1.5rem; padding:.9rem 1.25rem;
+  background:var(--surface2); font-size:.85rem; color:var(--muted);
+  border-top:1px solid var(--border); flex-wrap:wrap;
+  align-items:center;
+}
+.table-footer b { color:var(--text); }
+ 
+/* Pagination */
+.pagination {
+  display:flex; gap:.4rem; align-items:center;
+  margin-left:auto;
+}
+.page-btn {
+  padding:.3rem .65rem; border-radius:6px;
+  border:1px solid var(--border); background:var(--surface);
+  color:var(--muted); font-size:.8rem; cursor:pointer;
+  transition:all var(--tr);
+}
+.page-btn:hover, .page-btn.active { background:var(--accent); border-color:var(--accent); color:#000; }
+.page-btn:disabled { opacity:.35; cursor:not-allowed; }
+ 
+/* Progress */
+.progress-wrap { margin-top:1rem; }
+.progress-label { font-size:.82rem; color:var(--muted); margin-bottom:.4rem; display:flex; justify-content:space-between; }
+.progress { width:100%; height:12px; background:var(--surface2); border-radius:20px; overflow:hidden; }
+#bar { height:100%; width:0%; background:linear-gradient(90deg,var(--green),var(--accent)); border-radius:20px; transition:.6s ease; }
+ 
+/* =========================================== */
+/* EXPORT BUTTONS                              */
+/* =========================================== */
+.export-btns { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:.75rem; }
+ 
+/* =========================================== */
+/* TIMELINE / HISTORY                          */
+/* =========================================== */
+#history { background:var(--bg); }
+.timeline { position:relative; padding-left:2rem; }
+.timeline::before {
+  content:''; position:absolute; left:.75rem; top:0; bottom:0;
+  width:2px; background:linear-gradient(to bottom, var(--accent), transparent);
+}
+.timeline-item {
+  position:relative; margin-bottom:1.5rem;
+  animation:fadeUp .5s both;
+}
+.timeline-dot {
+  position:absolute; left:-1.45rem; top:.3rem;
+  width:12px; height:12px; border-radius:50%;
+  background:var(--accent); border:2px solid var(--bg);
+  box-shadow:0 0 8px rgba(56,189,248,.5);
+}
+.timeline-content {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1rem 1.25rem;
+  transition:border-color var(--tr);
+}
+.timeline-content:hover { border-color:var(--accent); }
+.timeline-time { font-size:.75rem; color:var(--muted); }
+.timeline-title { font-weight:600; font-size:.9rem; margin:.2rem 0; }
+.timeline-desc { font-size:.82rem; color:var(--muted); }
+ 
+/* =========================================== */
+/* CHART                                       */
+/* =========================================== */
+#statistici { background:var(--bg); }
+.charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+@media(max-width:700px) { .charts-grid { grid-template-columns:1fr; } }
+.chart-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.5rem;
+}
+ 
+/* =========================================== */
+/* WEATHER WIDGET                              */
+/* =========================================== */
+#weather-section { background:var(--surface); }
+.weather-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; }
+@media(max-width:800px) { .weather-grid { grid-template-columns:1fr; } }
+.weather-widget {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.5rem;
+  transition:border-color var(--tr);
+}
+.weather-widget:hover { border-color:var(--accent); }
+.weather-main { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+.weather-icon { font-size:3.5rem; line-height:1; }
+.weather-temp {
+  font-family:'Syne',sans-serif;
+  font-size:3rem; font-weight:800;
+  color:var(--accent); line-height:1;
+}
+.weather-desc { color:var(--muted); font-size:.88rem; text-transform:capitalize; }
+.weather-city { font-weight:700; font-size:1.1rem; }
+.weather-details { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
+.weather-detail {
+  background:var(--surface); border-radius:8px;
+  padding:.5rem .75rem; font-size:.8rem;
+  color:var(--muted); display:flex; gap:.4rem; align-items:center;
+}
+.weather-detail b { color:var(--text); }
+.weather-forecast { display:flex; gap:.5rem; margin-top:1rem; overflow-x:auto; }
+.forecast-day {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:.5rem .75rem;
+  text-align:center; font-size:.75rem; flex-shrink:0; min-width:60px;
+}
+.forecast-day .fd-icon { font-size:1.5rem; display:block; margin:.3rem 0; }
+.forecast-day .fd-temp { color:var(--accent); font-weight:700; }
+.forecast-day .fd-day  { color:var(--muted); }
+ 
+/* =========================================== */
+/* TOOLS                                       */
+/* =========================================== */
+#tools { background:var(--surface); }
+.tools-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+@media(max-width:650px) { .tools-grid { grid-template-columns:1fr; } }
+textarea { resize:vertical; min-height:120px; }
+.price-result {
+  margin-top:1rem; padding:1rem;
+  background:var(--surface2); border-radius:10px;
+  font-family:'Syne',sans-serif;
+  font-size:1.4rem; font-weight:700;
+  color:var(--accent); text-align:center;
+  min-height:56px;
+}
+/* Notes toolbar */
+.notes-toolbar { display:flex; gap:.4rem; margin-bottom:.5rem; flex-wrap:wrap; }
+.notes-tool-btn {
+  padding:.3rem .6rem; border-radius:6px;
+  border:1px solid var(--border); background:var(--surface2);
+  color:var(--muted); font-size:.8rem; cursor:pointer;
+  transition:all var(--tr);
+}
+.notes-tool-btn:hover { border-color:var(--accent); color:var(--accent); }
+.notes-stats { font-size:.75rem; color:var(--muted); margin-top:.4rem; text-align:right; }
+ 
+/* =========================================== */
+/* CURRENCY CONVERTER                          */
+/* =========================================== */
+#currency { background:var(--bg); }
+.currency-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.5rem;
+  max-width:500px;
+}
+.currency-row { display:flex; align-items:center; gap:.75rem; }
+.currency-amount-result {
+  background:var(--surface2); border-radius:10px; padding:1rem;
+  margin-top:.75rem; font-family:'Syne',sans-serif;
+  font-size:1.3rem; font-weight:700; color:var(--green);
+  text-align:center; min-height:52px;
+}
+.rate-info { font-size:.75rem; color:var(--muted); margin-top:.3rem; text-align:center; }
+ 
+/* =========================================== */
+/* SECURITY                                    */
+/* =========================================== */
+#securitate { background:var(--bg); }
+.security-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+.sec-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.25rem; text-align:center;
+  transition:transform var(--tr), border-color var(--tr);
+}
+.sec-item:hover { transform:translateY(-3px); border-color:var(--accent); }
+.sec-icon { font-size:2rem; margin-bottom:.6rem; }
+.sec-item p { font-size:.82rem; color:var(--muted); }
+.sec-score-bar {
+  margin-top:1rem; background:var(--surface2); border-radius:20px;
+  overflow:hidden; height:8px;
+}
+.sec-score-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--green),var(--accent)); }
+ 
+/* =========================================== */
+/* LEADERBOARD                                 */
+/* =========================================== */
+#leaderboard { background:var(--surface); }
+.lb-list { display:flex; flex-direction:column; gap:.75rem; max-width:650px; }
+.lb-item {
+  display:flex; align-items:center; gap:1rem;
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1rem 1.25rem;
+  transition:transform var(--tr), border-color var(--tr);
+}
+.lb-item:hover { transform:translateX(4px); border-color:var(--accent); }
+.lb-rank {
+  font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800;
+  min-width:2rem; text-align:center;
+}
+.lb-rank.gold   { color:#f59e0b; }
+.lb-rank.silver { color:#94a3b8; }
+.lb-rank.bronze { color:#cd7c2f; }
+.lb-info { flex:1; }
+.lb-name { font-weight:600; font-size:.95rem; }
+.lb-sub { font-size:.75rem; color:var(--muted); }
+.lb-score {
+  background:var(--surface2); border-radius:8px;
+  padding:.3rem .9rem; font-size:.85rem;
+  color:var(--accent); font-weight:700;
+}
+.lb-bar-wrap { width:100%; height:4px; background:var(--surface2); border-radius:4px; margin-top:.4rem; }
+.lb-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .8s ease; }
+ 
+/* =========================================== */
+/* PHOTO UPLOAD                                */
+/* =========================================== */
+#photos { background:var(--bg); }
+.photo-area {
+  border:2px dashed var(--border); border-radius:var(--radius);
+  padding:2.5rem; text-align:center; cursor:pointer;
+  transition:border-color var(--tr), background var(--tr);
+  background:var(--surface);
+}
+.photo-area:hover, .photo-area.dragover {
+  border-color:var(--accent); background:rgba(56,189,248,.04);
+}
+.photo-area i { font-size:2.5rem; color:var(--muted); margin-bottom:.75rem; display:block; }
+.photo-area p { color:var(--muted); font-size:.9rem; }
+#photoPreview {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:.75rem; margin-top:1rem;
+}
+.photo-thumb {
+  position:relative; border-radius:10px; overflow:hidden;
+  aspect-ratio:1; border:1px solid var(--border);
+  transition:transform var(--tr);
+}
+.photo-thumb:hover { transform:scale(1.05); }
+.photo-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.del-photo {
+  position:absolute; top:4px; right:4px;
+  background:rgba(239,68,68,.9); color:#fff;
+  border:none; border-radius:50%; width:22px; height:22px;
+  font-size:.7rem; cursor:pointer; display:flex;
+  align-items:center; justify-content:center;
+  transition:transform var(--tr);
+}
+.del-photo:hover { transform:scale(1.15); }
+.photo-counter { font-size:.8rem; color:var(--muted); margin-top:.5rem; }
+ 
+/* =========================================== */
+/* CONTACT FORM                                */
+/* =========================================== */
+#contact-form-section { background:var(--surface); }
+.contact-form-card {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.75rem;
+}
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+@media(max-width:700px){ .contact-grid { grid-template-columns:1fr; } }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+@media(max-width:500px){ .form-row { grid-template-columns:1fr; } }
+.form-group { display:flex; flex-direction:column; gap:.3rem; margin-bottom:.75rem; }
+.char-count { font-size:.72rem; color:var(--muted); text-align:right; }
+.form-sent {
+  text-align:center; padding:2rem;
+  color:var(--green); font-size:1.1rem; font-weight:600;
+  display:none; flex-direction:column; gap:.75rem; align-items:center;
+}
+.form-sent i { font-size:3rem; }
+.contact-info { display:flex; flex-direction:column; gap:1rem; }
+.contact-info-item {
+  display:flex; align-items:flex-start; gap:1rem;
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1rem 1.25rem;
+  transition:border-color var(--tr);
+}
+.contact-info-item:hover { border-color:var(--accent); }
+.contact-info-icon { font-size:1.5rem; color:var(--accent); flex-shrink:0; }
+.contact-info-text h4 { font-weight:700; font-size:.9rem; margin-bottom:.2rem; }
+.contact-info-text p  { font-size:.82rem; color:var(--muted); }
+ 
+/* =========================================== */
+/* NOTIFICATIONS PANEL                         */
+/* =========================================== */
+#notif-section { background:var(--bg); }
+.notif-panel {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.5rem; max-width:500px;
+}
+.notif-dot { width:10px; height:10px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+.notif-dot.granted { background:var(--green); animation:dotPulse 2s infinite; }
+.notif-dot.denied  { background:var(--red); }
+@keyframes dotPulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0)} }
+.notif-status {
+  display:flex; align-items:center; gap:.75rem;
+  padding:.75rem 1rem; background:var(--surface2);
+  border-radius:10px; margin-bottom:1rem;
+}
+.notif-log { margin-top:1rem; max-height:180px; overflow-y:auto; display:flex; flex-direction:column; gap:.4rem; }
+.notif-entry {
+  font-size:.8rem; color:var(--muted);
+  padding:.4rem .75rem; background:var(--surface2);
+  border-radius:6px; border-left:3px solid var(--accent);
+  animation:fadeUp .3s both;
+}
+.notif-entry.old { border-left-color:var(--muted); opacity:.6; }
+ 
+/* =========================================== */
+/* TRACKER                                     */
+/* =========================================== */
+#tracker { background:var(--surface); }
+.tracker-grid { display:grid; grid-template-columns:1.2fr 1.8fr; gap:1.5rem; }
+@media(max-width:750px){ .tracker-grid { grid-template-columns:1fr; } }
+.tracker-list { display:flex; flex-direction:column; gap:.6rem; max-height:450px; overflow-y:auto; }
+.tracker-item {
+  display:flex; align-items:center; gap:.75rem;
+  padding:.85rem 1rem; background:var(--bg);
+  border:1px solid var(--border); border-radius:10px;
+  cursor:pointer; transition:border-color var(--tr), background var(--tr);
+}
+.tracker-item:hover { border-color:var(--accent); }
+.tracker-item.selected { border-color:var(--accent); background:rgba(56,189,248,.05); }
+.tracker-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.tracker-info { flex:1; min-width:0; }
+.tracker-name { font-weight:600; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tracker-awb  { font-size:.72rem; color:var(--muted); font-family:monospace; }
+.tracker-status { font-size:.72rem; font-weight:700; }
+.tracker-eta { font-size:.72rem; color:var(--accent2); }
+.tracker-map-area {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; min-height:380px;
+  display:flex; flex-direction:column;
+}
+.tracker-map-header {
+  padding:.85rem 1rem; border-bottom:1px solid var(--border);
+  font-weight:700; font-size:.92rem;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.tracker-map-frame { flex:1; }
+.tracker-map-frame iframe { width:100%; height:100%; min-height:280px; border:none; display:block; }
+.tracker-timeline {
+  padding:.75rem 1rem; border-top:1px solid var(--border);
+  display:flex; gap:.4rem; align-items:center; font-size:.75rem; color:var(--muted);
+  overflow-x:auto;
+}
+.t-step { display:flex; align-items:center; gap:.3rem; }
+.t-dot  { width:8px; height:8px; border-radius:50%; background:var(--surface2); flex-shrink:0; }
+.t-dot.done   { background:var(--green); }
+.t-dot.active { background:var(--accent); box-shadow:0 0 6px rgba(56,189,248,.5); }
+.t-line { width:20px; height:2px; background:var(--surface2); flex-shrink:0; }
+.t-line.done { background:var(--green); }
+ 
+/* =========================================== */
+/* MULTIMEDIA                                  */
+/* =========================================== */
+#multimedia { background:var(--bg); }
+.media-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+@media(max-width:720px) { .media-grid { grid-template-columns:1fr; } }
+iframe {
+  width:100%; border-radius:var(--radius);
+  border:1px solid var(--border);
+  aspect-ratio:16/9; display:block;
+}
+ 
+/* =========================================== */
+/* MUSIC PLAYER                                */
+/* =========================================== */
+#music-player {
+  position:fixed; bottom:5.5rem; left:1.5rem;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1rem 1.25rem;
+  width:290px; z-index:400;
+  box-shadow:var(--shadow);
+  display:none;
+  animation:fadeUp .3s both;
+}
+#music-player.open { display:block; }
+.player-title {
+  font-family:'Syne',sans-serif; font-size:.85rem; font-weight:700;
+  color:var(--accent); margin-bottom:.75rem;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.player-track {
+  font-size:.8rem; color:var(--muted);
+  margin-bottom:.75rem; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.player-controls { display:flex; gap:.5rem; align-items:center; justify-content:center; }
+.player-btn {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:50%; width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--text); cursor:pointer; font-size:.9rem;
+  transition:background var(--tr), color var(--tr);
+}
+.player-btn:hover, .player-btn.active { background:var(--accent); color:#000; }
+.player-progress { margin-top:.75rem; }
+.player-prog-bar {
+  width:100%; height:4px; background:var(--surface2);
+  border-radius:4px; overflow:hidden; cursor:pointer;
+}
+.player-prog-fill { height:100%; background:var(--accent); width:0%; transition:width .5s linear; }
+.player-times { display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted); margin-top:.3rem; }
+.player-vol { display:flex; align-items:center; gap:.5rem; margin-top:.5rem; font-size:.8rem; color:var(--muted); }
+.player-vol input[type="range"] { flex:1; accent-color:var(--accent); cursor:pointer; }
+.music-fab {
+  position:fixed; bottom:5.5rem; left:1.5rem;
+  width:44px; height:44px; border-radius:50%;
+  background:var(--accent); color:#000; border:none;
+  font-size:1.1rem; cursor:pointer; z-index:401;
+  box-shadow:0 4px 16px rgba(56,189,248,.4);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform var(--tr);
+}
+.music-fab:hover { transform:scale(1.1); }
+.music-eq {
+  display:flex; gap:2px; align-items:flex-end;
+  height:16px; margin-left:.5rem;
+}
+.eq-bar {
+  width:3px; background:var(--accent); border-radius:2px;
+  animation:eqAnim .6s ease-in-out infinite alternate;
+}
+.eq-bar:nth-child(1) { animation-duration:.5s; height:8px; }
+.eq-bar:nth-child(2) { animation-duration:.7s; height:14px; }
+.eq-bar:nth-child(3) { animation-duration:.4s; height:10px; }
+@keyframes eqAnim { to { height:4px; } }
+ 
+/* =========================================== */
+/* KEYBOARD SHORTCUTS PANEL                    */
+/* =========================================== */
+#shortcuts { background:var(--surface); }
+.shortcuts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; }
+.shortcut-item {
+  display:flex; align-items:center; gap:.75rem;
+  padding:.75rem 1rem; background:var(--bg);
+  border:1px solid var(--border); border-radius:10px;
+}
+.shortcut-keys { display:flex; gap:.3rem; flex-shrink:0; }
+kbd {
+  background:var(--surface2); border:1px solid var(--border);
+  border-bottom:3px solid rgba(0,0,0,.3);
+  border-radius:5px; padding:.2rem .5rem;
+  font-family:monospace; font-size:.78rem; color:var(--text);
+  font-weight:700;
+}
+.shortcut-desc { font-size:.85rem; color:var(--muted); }
+ 
+/* =========================================== */
+/* INVOICE GENERATOR                           */
+/* =========================================== */
+#invoice { background:var(--bg); }
+.invoice-preview {
+  background:#fff; color:#111;
+  border-radius:var(--radius); padding:2rem;
+  max-width:600px; font-size:.88rem; line-height:1.6;
+  box-shadow:var(--shadow);
+}
+.invoice-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; }
+.invoice-logo { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:#0ea5e9; }
+.invoice-meta { text-align:right; font-size:.8rem; color:#666; }
+.invoice-meta strong { color:#111; display:block; font-size:1rem; margin-bottom:.2rem; }
+.invoice-parties { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.invoice-party h4 { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:#999; margin-bottom:.3rem; }
+.invoice-items { width:100%; border-collapse:collapse; margin-bottom:1rem; }
+.invoice-items th { background:#f1f5f9; padding:.5rem .75rem; text-align:left; font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:#666; }
+.invoice-items td { padding:.5rem .75rem; border-top:1px solid #e2e8f0; }
+.invoice-total { text-align:right; }
+.invoice-total-row { display:flex; justify-content:flex-end; gap:2rem; padding:.3rem 0; font-size:.88rem; }
+.invoice-total-row:last-child { font-weight:800; font-size:1.05rem; border-top:2px solid #111; padding-top:.5rem; }
+.invoice-footer { margin-top:1.5rem; padding-top:1rem; border-top:1px solid #e2e8f0; font-size:.75rem; color:#999; text-align:center; }
+ 
+/* =========================================== */
+/* SOCIAL & CONTACT                            */
+/* =========================================== */
+#contact { background:var(--surface); }
+.social-links { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
+.social-link {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:46px; height:46px; border-radius:50%;
+  background:var(--bg); border:1.5px solid var(--border);
+  color:var(--text); font-size:1.1rem; text-decoration:none;
+  transition:all var(--tr); position:relative; overflow:hidden;
+}
+.social-link::after {
+  content:''; position:absolute; inset:0;
+  background:var(--accent); border-radius:50%;
+  transform:scale(0); transition:transform .3s;
+  z-index:0;
+}
+.social-link i { position:relative; z-index:1; }
+.social-link:hover::after { transform:scale(1); }
+.social-link:hover { color:#000; border-color:var(--accent); transform:translateY(-3px); }
+ 
+/* =========================================== */
+/* FOOTER                                      */
+/* =========================================== */
+footer[role="contentinfo"] {
+  background:var(--surface); border-top:1px solid var(--border);
+  padding:2.5rem 1.5rem; text-align:center;
+  color:var(--muted); font-size:.875rem;
+}
+footer a { color:var(--accent); text-decoration:none; }
+.footer-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:2rem; text-align:left; margin-bottom:2rem;
+}
+.footer-col h4 {
+  font-family:'Syne',sans-serif; font-size:.9rem; font-weight:700;
+  color:var(--text); margin-bottom:.75rem;
+}
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+.footer-col ul li a { color:var(--muted); text-decoration:none; font-size:.83rem; transition:color var(--tr); }
+.footer-col ul li a:hover { color:var(--accent); }
+.footer-bottom { border-top:1px solid var(--border); padding-top:1.5rem; }
+ 
+/* =========================================== */
+/* MODAL                                       */
+/* =========================================== */
+.modal {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.8);
+  display:none; justify-content:center; align-items:center;
+  z-index:9000; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+}
+.modal.open { display:flex; }
+.modal-box {
+  background:var(--surface); border:1px solid var(--border);
+  padding:2rem; border-radius:var(--radius);
+  width:min(440px,92%);
+  animation:fadeUp .3s both;
+  box-shadow:var(--shadow);
+  max-height:90vh; overflow-y:auto;
+}
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; }
+.modal-close {
+  background:transparent; border:1px solid var(--border);
+  color:var(--muted); font-size:1rem; cursor:pointer;
+  padding:.3rem .5rem; border-radius:6px;
+  transition:all var(--tr);
+}
+.modal-close:hover { color:var(--text); border-color:var(--accent); }
+ 
+/* QR Modal */
+.qr-modal-box {
+  background:var(--surface); border:1px solid var(--border);
+  padding:2rem; border-radius:var(--radius);
+  width:min(360px,90%); text-align:center;
+  animation:fadeUp .3s both;
+}
+#qrCanvas { display:flex; justify-content:center; margin:1.25rem auto; }
+#qrCanvas canvas, #qrCanvas img { border-radius:8px; background:#fff; padding:10px; }
+.qr-awb-label {
+  font-family:monospace; font-size:.95rem; font-weight:700;
+  color:var(--accent); margin-bottom:1rem; word-break:break-all;
+}
+ 
+/* =========================================== */
+/* TOAST                                       */
+/* =========================================== */
+#toast {
+  position:fixed; bottom:1.5rem; right:1.5rem;
+  padding:.8rem 1.3rem;
+  background:var(--green); color:#000;
+  border-radius:12px; font-weight:700; font-size:.88rem;
+  display:none; z-index:9999;
+  animation:toastIn .3s both;
+  max-width:340px; box-shadow:var(--shadow);
+  display:flex; align-items:center; gap:.5rem;
+}
+#toast { display:none; }
+#toast.visible { display:flex; }
+#toast.error { background:var(--red); color:#fff; }
+#toast.info  { background:var(--accent); color:#000; }
+#toast.warn  { background:var(--accent2); color:#000; }
+@keyframes toastIn { from { opacity:0; transform:translateY(12px); } }
+ 
+/* Toast queue indicator */
+.toast-progress {
+  position:absolute; bottom:0; left:0; height:3px;
+  background:rgba(0,0,0,.3); border-radius:0 0 12px 12px;
+  width:100%; animation:toastProg 2.8s linear forwards;
+}
+@keyframes toastProg { from{width:100%} to{width:0%} }
+ 
+/* =========================================== */
+/* TOP BUTTON                                  */
+/* =========================================== */
+#topBtn {
+  position:fixed; bottom:5rem; right:1.5rem;
+  width:44px; height:44px;
+  background:var(--accent); color:#000;
+  border:none; border-radius:50%;
+  font-size:1.1rem; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+  box-shadow:0 4px 16px rgba(56,189,248,.4);
+  transition:transform var(--tr);
+  z-index:500;
+}
+#topBtn:hover { transform:translateY(-3px) scale(1.05); }
+ 
+/* =========================================== */
+/* DARK/LIGHT TOGGLE                           */
+/* =========================================== */
+.dm-toggle {
+  position:relative; width:52px; height:28px;
+  background:var(--surface2); border-radius:50px;
+  border:1.5px solid var(--border); cursor:pointer;
+  transition:background var(--tr); flex-shrink:0;
+}
+.dm-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.dm-slider {
+  position:absolute; inset:0; border-radius:50px; cursor:pointer;
+}
+.dm-slider::before {
+  content:'🌙'; position:absolute;
+  top:2px; left:3px; width:20px; height:20px;
+  background:var(--surface); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; line-height:20px; text-align:center;
+  transition:transform var(--tr);
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.dm-toggle input:checked + .dm-slider::before {
+  transform:translateX(24px); content:'☀️';
+}
+ 
+/* =========================================== */
+/* ANIMATIONS                                  */
+/* =========================================== */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.anim    { animation:fadeUp .6s both; }
+.anim-d1 { animation-delay:.1s; }
+.anim-d2 { animation-delay:.2s; }
+.anim-d3 { animation-delay:.3s; }
+.anim-d4 { animation-delay:.4s; }
+ 
+/* Intersection Observer fade-in */
+.reveal { opacity:0; transform:translateY(30px); transition:opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+ 
+/* =========================================== */
+/* MISC UTILS                                  */
+/* =========================================== */
+.divider {
+  border:none; height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:2rem 0;
+}
+.tag {
+  display:inline-block; padding:.2rem .6rem;
+  background:rgba(56,189,248,.1); border:1px solid rgba(56,189,248,.2);
+  border-radius:6px; font-size:.75rem; color:var(--accent); font-weight:600;
+}
+.tag-green   { background:rgba(34,197,94,.1);  border-color:rgba(34,197,94,.2);  color:var(--green); }
+.tag-orange  { background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.2); color:var(--accent2); }
+.tag-red     { background:rgba(239,68,68,.1);  border-color:rgba(239,68,68,.2);  color:var(--red); }
+.tag-purple  { background:rgba(168,85,247,.1); border-color:rgba(168,85,247,.2); color:var(--purple); }
+.flex-center { display:flex; align-items:center; justify-content:center; }
+.gap-sm { gap:.5rem; }
+.gap-md { gap:1rem; }
+.mt-sm { margin-top:.5rem; }
+.mt-md { margin-top:1rem; }
+.muted { color:var(--muted); font-size:.85rem; }
+.bold  { font-weight:700; }
+.accent{ color:var(--accent); }
+ 
+/* =========================================== */
+/* RESPONSIVE                                  */
+/* =========================================== */
+@media(max-width:600px) {
+  h1 { font-size:2rem; }
+  .actions-cell { gap:.25rem; }
+  .btn-sm { padding:5px 8px; font-size:.75rem; }
+  section { padding:2rem 0; }
+  .tools-grid, .media-grid { grid-template-columns:1fr; }
+  #invoiceGrid { grid-template-columns:1fr !important; }
+}
+ 
+/* =========================================== */
+/* PRINT STYLES                                */
+/* =========================================== */
+@media print {
+  header, footer, #auth, #loader, #topBtn, .music-fab,
+  #music-player, .hero-btns, .filters, .actions-cell,
+  .export-btns, .bulk-bar, nav { display:none !important; }
+  body { background:#fff !important; color:#000 !important; }
+  .card, .stat-card { border:1px solid #ccc !important; box-shadow:none !important; }
+  section { page-break-inside:avoid; }
+}
 </style>
 </head>
-
 <body>
-
-<header>
-<h2>FastCourier Pro</h2>
-<nav>
-<a href="#servicii">Servicii</a>
-<a href="#tracking">Tracking</a>
-<a href="#contact">Contact</a>
-</nav>
-
-<div>
-<button onclick="dark()">🌙</button>
-<button onclick="login()">Admin</button>
+ 
+<a class="skip-link" href="#main-content">Sari la conținut principal</a>
+ 
+<!-- =========================================== -->
+<!-- PARTICLES                                   -->
+<!-- =========================================== -->
+<div id="particles" aria-hidden="true"></div>
+ 
+<!-- =========================================== -->
+<!-- LOADER                                      -->
+<!-- =========================================== -->
+<div id="loader" role="status" aria-label="Se încarcă aplicația">
+  <div class="loader-logo" aria-hidden="true">🚚 FastCourier</div>
+  <div class="loader-spinner" aria-hidden="true"></div>
+  <div class="loader-bar" aria-hidden="true"><div class="loader-bar-fill"></div></div>
+  <div class="loader-text" id="loaderText">Inițializare sistem...</div>
 </div>
-</header>
-
-<!-- HERO -->
-<div class="hero fade">
-<h1>Livrare rapidă oriunde</h1>
-<p>Curier profesional cu sistem inteligent</p>
-<button onclick="openOrder()">Comandă acum</button>
+ 
+<!-- =========================================== -->
+<!-- AUTH                                        -->
+<!-- =========================================== -->
+<div id="auth" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="auth-box">
+    <h2 id="auth-title"><i class="fas fa-lock" aria-hidden="true"></i> Acces Securizat</h2>
+    <div class="auth-tabs" role="tablist" aria-label="Tip autentificare">
+      <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true" aria-controls="panel-login" onclick="switchTab('login')">
+        <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login
+      </button>
+      <button class="auth-tab" id="tab-register" role="tab" aria-selected="false" aria-controls="panel-register" onclick="switchTab('register')">
+        <i class="fas fa-user-plus" aria-hidden="true"></i> Register
+      </button>
+    </div>
+    <!-- Login Panel -->
+    <div id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+      <label for="loginUser" class="sr-only">Username</label>
+      <input id="loginUser" placeholder="Username" maxlength="20" autocomplete="username"
+             aria-required="true" onkeydown="if(event.key==='Enter')login()">
+      <label for="loginPass" class="sr-only">Parolă</label>
+      <input id="loginPass" type="password" placeholder="Parolă" maxlength="30"
+             autocomplete="current-password" aria-required="true" onkeydown="if(event.key==='Enter')login()">
+      <div class="auth-error" id="loginError" role="alert" aria-live="polite"></div>
+      <div class="btn-flex-gap">
+        <label class="auth-remember-label">
+          <input type="checkbox" id="rememberMe"> Ține-mă minte
+        </label>
+      </div>
+      <button class="btn btn-full" style="margin-top:.75rem" onclick="login()" aria-label="Autentifică-te">
+        <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login
+      </button>
+      <div style="margin-top:.75rem;display:flex;gap:.5rem">
+        <button class="btn btn-ghost btn-sm" onclick="quickLogin('admin','admin123')" style="flex:1;justify-content:center;font-size:.78rem">
+          Demo Admin
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="quickLogin('curier','curier123')" style="flex:1;justify-content:center;font-size:.78rem">
+          Demo Curier
+        </button>
+      </div>
+    </div>
+    <!-- Register Panel -->
+    <div id="panel-register" role="tabpanel" aria-labelledby="tab-register" style="display:none">
+      <label for="regUser" class="sr-only">Username nou</label>
+      <input id="regUser" placeholder="Username (3-20 caractere)" maxlength="20"
+             pattern="[A-Za-z0-9]{3,20}" aria-required="true" oninput="checkStrength()">
+      <label for="regPass" class="sr-only">Parolă nouă</label>
+      <input id="regPass" type="password" placeholder="Parolă (min 6 caractere)" maxlength="30"
+             aria-required="true" oninput="checkStrength()">
+      <div class="auth-strength" id="strengthBars" aria-hidden="true">
+        <div class="strength-bar" id="sb1"></div>
+        <div class="strength-bar" id="sb2"></div>
+        <div class="strength-bar" id="sb3"></div>
+        <div class="strength-bar" id="sb4"></div>
+      </div>
+      <div id="strengthLabel" style="font-size:.75rem;color:var(--muted);margin-top:.3rem"></div>
+      <label for="regPass2" class="sr-only">Confirmă parola</label>
+      <input id="regPass2" type="password" placeholder="Confirmă parola" maxlength="30" aria-required="true">
+      <div class="auth-error" id="regError" role="alert" aria-live="polite"></div>
+      <button class="btn btn-success btn-full" style="margin-top:.75rem" onclick="register()" aria-label="Creează cont">
+        <i class="fas fa-user-plus" aria-hidden="true"></i> Creează cont
+      </button>
+    </div>
+  </div>
 </div>
-
-<!-- SERVICES -->
-<section id="servicii">
-<h2 class="title">Serviciile noastre</h2>
-
-<div class="cards">
-<div class="card">🚚 Livrare rapidă</div>
-<div class="card">📦 Ridicare colet</div>
-<div class="card">⏱ Programări</div>
-<div class="card">🛡 Asigurare</div>
+ 
+<!-- =========================================== -->
+<!-- APP                                         -->
+<!-- =========================================== -->
+<div id="app" style="display:none">
+ 
+  <!-- HEADER -->
+  <header id="mainHeader">
+    <a href="#hero" class="logo" aria-label="FastCourier - Pagina principală">
+      <i class="fas fa-truck-fast" aria-hidden="true"></i>
+      FastCourier
+      <span class="logo-badge">v2</span>
+    </a>
+ 
+    <button class="menu-btn" aria-label="Deschide meniul" aria-expanded="false" aria-controls="main-nav">
+      <span class="icon-bar" aria-hidden="true"></span>
+      <span class="icon-bar" aria-hidden="true"></span>
+      <span class="icon-bar" aria-hidden="true"></span>
+    </button>
+ 
+    <nav role="navigation" class="nav-links" id="main-nav" aria-label="Navigare principală">
+      <a href="#hero">Acasă</a>
+      <a href="#servicii">Servicii</a>
+      <a href="#adauga">Comenzi</a>
+      <a href="#tracker">Tracker</a>
+      <a href="#statistici">Statistici</a>
+      <a href="#tools">Unelte</a>
+      <a href="#leaderboard">Top</a>
+      <a href="#contact">Contact</a>
+    </nav>
+ 
+    <div class="header-meta" aria-label="Informații sistem">
+      <span id="welcomeMsg" aria-live="polite"></span>
+      <span><i class="fas fa-clock" aria-hidden="true"></i> <span id="clock"></span></span>
+      <span><i class="fas fa-calendar" aria-hidden="true"></i> <span id="dateNow"></span></span>
+      <span id="netStatus" aria-live="polite"></span>
+      <span id="headerWeather"></span>
+    </div>
+ 
+    <div class="header-actions">
+      <!-- Themes -->
+      <div class="theme-row" role="group" aria-label="Schimbă tema">
+        <button class="theme-dot td-default" onclick="setTheme('')"            aria-label="Tema default"   title="Default"></button>
+        <button class="theme-dot td-blue"    onclick="setTheme('theme-blue')"  aria-label="Tema albastru"  title="Blue"></button>
+        <button class="theme-dot td-green"   onclick="setTheme('theme-green')" aria-label="Tema verde"     title="Green"></button>
+        <button class="theme-dot td-red"     onclick="setTheme('theme-red')"   aria-label="Tema roșu"      title="Red"></button>
+        <button class="theme-dot td-purple"  onclick="setTheme('theme-purple')"aria-label="Tema mov"       title="Purple"></button>
+        <button class="theme-dot td-light"   onclick="setTheme('theme-light')" aria-label="Tema luminos"   title="Light"></button>
+        <button class="theme-dot td-cyber"   onclick="setTheme('theme-cyber')" aria-label="Tema cyber"     title="Cyber"></button>
+        <button class="theme-dot td-sunset"  onclick="setTheme('theme-sunset')"aria-label="Tema sunset"    title="Sunset"></button>
+      </div>
+      <!-- Notification bell -->
+      <button class="notif-bell-btn" onclick="toggleNotifPanel()" aria-label="Notificări" title="Notificări">
+        <i class="fas fa-bell" aria-hidden="true"></i>
+        <span class="notif-count" id="notifCount" aria-label="3 notificări necitite">3</span>
+      </button>
+      <button class="btn btn-sm btn-ghost" onclick="openFullscreen()" aria-label="Ecran complet">
+        <i class="fas fa-expand" aria-hidden="true"></i>
+      </button>
+      <button class="btn btn-sm btn-danger" onclick="logout()" aria-label="Deconectare">
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+ 
+  <!-- NOTIFICATION DROPDOWN -->
+  <div id="notifDropdown" style="
+    position:fixed; top:70px; right:1rem;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); width:320px; z-index:300;
+    box-shadow:var(--shadow); display:none;
+  " role="dialog" aria-label="Panou notificări">
+    <div style="padding:1rem 1.25rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;font-size:.95rem">🔔 Notificări</h3>
+      <button class="btn btn-xs btn-ghost" onclick="clearNotifs()">Șterge tot</button>
+    </div>
+    <div id="notifList" style="max-height:300px;overflow-y:auto;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;"></div>
+  </div>
+ 
+  <!-- MAIN -->
+  <main id="main-content" role="main">
+ 
+    <!-- ── HERO ── -->
+    <section id="hero" aria-labelledby="hero-h1">
+      <h1 id="hero-h1">FastCourier PRO MAX ULTIMATE</h1>
+      <p class="hero-sub">Platformă completă de management al livrărilor — securizată, accesibilă, modernă, cu funcționalități avansate pentru profesioniști.</p>
+      <p class="hero-fact" id="fact" aria-live="polite"></p>
+      <span class="hero-version">v2.0 — Edition Ultimă</span>
+      <div class="hero-btns">
+        <a href="#adauga" class="btn" aria-label="Comandă nouă">
+          <i class="fas fa-plus" aria-hidden="true"></i> Comandă nouă
+        </a>
+        <a href="#tracker" class="btn btn-ghost" aria-label="Tracker AWB">
+          <i class="fas fa-map-location-dot" aria-hidden="true"></i> Tracker
+        </a>
+        <a href="#statistici" class="btn btn-ghost" aria-label="Statistici">
+          <i class="fas fa-chart-bar" aria-hidden="true"></i> Statistici
+        </a>
+        <button class="btn btn-ghost" onclick="printPage()" aria-label="Printează raportul">
+          <i class="fas fa-print" aria-hidden="true"></i> Print
+        </button>
+      </div>
+ 
+      <div class="container">
+        <div class="stats-bar" role="region" aria-label="Statistici rapide">
+          <div class="stat-card anim">
+            <div class="stat-icon" aria-hidden="true">📦</div>
+            <span class="stat-val" id="statTotal">0</span>
+            <span class="stat-lbl">Total comenzi</span>
+          </div>
+          <div class="stat-card anim anim-d1">
+            <div class="stat-icon" aria-hidden="true">🔄</div>
+            <span class="stat-val" id="statProcesat">0</span>
+            <span class="stat-lbl">Procesate</span>
+          </div>
+          <div class="stat-card anim anim-d2">
+            <div class="stat-icon" aria-hidden="true">🚚</div>
+            <span class="stat-val" id="statDrum">0</span>
+            <span class="stat-lbl">În drum</span>
+          </div>
+          <div class="stat-card anim anim-d3">
+            <div class="stat-icon" aria-hidden="true">✅</div>
+            <span class="stat-val" id="statLivrat">0</span>
+            <span class="stat-lbl">Livrate</span>
+          </div>
+          <div class="stat-card anim anim-d4">
+            <div class="stat-icon" aria-hidden="true">❌</div>
+            <span class="stat-val" id="statAnulat">0</span>
+            <span class="stat-lbl">Anulate</span>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── SERVICII ── -->
+    <section id="servicii" aria-labelledby="servicii-h2">
+      <div class="container">
+        <h2 id="servicii-h2"><i class="fas fa-boxes-stacked" aria-hidden="true"></i> Servicii <span class="section-badge">8 TOTAL</span></h2>
+        <div class="services">
+          <article class="service anim" aria-labelledby="svc1">
+            <div class="svc-icon" aria-hidden="true">🚚</div>
+            <h3 id="svc1">Livrare Rapidă</h3>
+            <p style="color:var(--muted);font-size:.88rem">Transport în 24h oriunde în Moldova.</p>
+            <span class="svc-tag">24h</span>
+          </article>
+          <article class="service anim anim-d1" aria-labelledby="svc2">
+            <div class="svc-icon" aria-hidden="true">📍</div>
+            <h3 id="svc2">AWB Tracking</h3>
+            <p style="color:var(--muted);font-size:.88rem">Monitorizare live a coletului în timp real.</p>
+            <span class="svc-tag">LIVE</span>
+          </article>
+          <article class="service anim anim-d2" aria-labelledby="svc3">
+            <div class="svc-icon" aria-hidden="true">🔒</div>
+            <h3 id="svc3">Sistem Securizat</h3>
+            <p style="color:var(--muted);font-size:.88rem">Protecție XSS, CSP și validare completă.</p>
+            <span class="svc-tag">SECURE</span>
+          </article>
+          <article class="service anim anim-d3" aria-labelledby="svc4">
+            <div class="svc-icon" aria-hidden="true">📊</div>
+            <h3 id="svc4">Rapoarte & Grafice</h3>
+            <p style="color:var(--muted);font-size:.88rem">Dashboard vizual cu Chart.js.</p>
+            <span class="svc-tag">CHARTS</span>
+          </article>
+          <article class="service anim" aria-labelledby="svc5">
+            <div class="svc-icon" aria-hidden="true">♿</div>
+            <h3 id="svc5">WAI-ARIA</h3>
+            <p style="color:var(--muted);font-size:.88rem">Complet accesibil screen readere & tastatură.</p>
+            <span class="svc-tag">A11Y</span>
+          </article>
+          <article class="service anim anim-d1" aria-labelledby="svc6">
+            <div class="svc-icon" aria-hidden="true">💾</div>
+            <h3 id="svc6">Date Persistente</h3>
+            <p style="color:var(--muted);font-size:.88rem">Datele salvate local pentru fiecare sesiune.</p>
+            <span class="svc-tag">LOCAL</span>
+          </article>
+          <article class="service anim anim-d2" aria-labelledby="svc7">
+            <div class="svc-icon" aria-hidden="true">📱</div>
+            <h3 id="svc7">QR Code</h3>
+            <p style="color:var(--muted);font-size:.88rem">Generare automată QR pentru fiecare AWB.</p>
+            <span class="svc-tag">QR</span>
+          </article>
+          <article class="service anim anim-d3" aria-labelledby="svc8">
+            <div class="svc-icon" aria-hidden="true">📄</div>
+            <h3 id="svc8">Export CSV/Print</h3>
+            <p style="color:var(--muted);font-size:.88rem">Export rapid al comenzilor în format CSV.</p>
+            <span class="svc-tag">EXPORT</span>
+          </article>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── ADAUGĂ COMANDĂ ── -->
+    <section id="adauga" aria-labelledby="adauga-h2">
+      <div class="container">
+        <h2 id="adauga-h2"><i class="fas fa-plus-circle" aria-hidden="true"></i> Adaugă Comandă</h2>
+ 
+        <div class="card" style="max-width:750px">
+          <div class="add-grid">
+            <div>
+              <label for="inp-client">Nume client *</label>
+              <input id="inp-client" placeholder="Ion Popescu" maxlength="30"
+                     pattern="[A-Za-zÃÂÎȘȚăâîșț ]{2,30}"
+                     aria-required="true" autocomplete="off">
+            </div>
+            <div>
+              <label for="inp-oras">Oraș destinație *</label>
+              <input id="inp-oras" placeholder="Chișinău" maxlength="30"
+                     pattern="[A-Za-zÃÂÎȘȚăâîșț ]{2,30}"
+                     aria-required="true" autocomplete="off">
+            </div>
+          </div>
+          <div class="add-grid" style="margin-top:.75rem">
+            <div>
+              <label for="inp-phone">Telefon</label>
+              <input id="inp-phone" placeholder="+373 XX XXX XXX" maxlength="20"
+                     type="tel" autocomplete="off">
+            </div>
+            <div>
+              <label for="inp-weight">Greutate (kg)</label>
+              <input id="inp-weight" placeholder="1.5" type="number" min="0.1" max="999" step="0.1">
+            </div>
+          </div>
+          <div style="margin-top:.75rem">
+            <label>Prioritate</label>
+            <div class="priority-row" role="radiogroup" aria-label="Selectează prioritatea comenzii">
+              <button class="priority-btn active-low"    id="p-low"    onclick="setPriority('low')"    aria-pressed="true"  aria-label="Prioritate scăzută">🟢 Scăzut</button>
+              <button class="priority-btn"               id="p-medium" onclick="setPriority('medium')" aria-pressed="false" aria-label="Prioritate medie">🟡 Mediu</button>
+              <button class="priority-btn"               id="p-high"   onclick="setPriority('high')"   aria-pressed="false" aria-label="Prioritate ridicată">🔴 Ridicat</button>
+            </div>
+          </div>
+          <div style="margin-top:.75rem">
+            <label for="inp-note">Notă comandă</label>
+            <input id="inp-note" placeholder="Notă suplimentară (opțional)" maxlength="100">
+          </div>
+          <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+            <button class="btn" onclick="addOrder()" aria-label="Adaugă comanda">
+              <i class="fas fa-plus" aria-hidden="true"></i> Adaugă comanda
+            </button>
+            <button class="btn btn-ghost" onclick="clearAddForm()" aria-label="Resetează formularul">
+              <i class="fas fa-rotate-left" aria-hidden="true"></i> Resetează
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── COMENZI TABLE ── -->
+    <section id="comenzi" aria-labelledby="comenzi-h2">
+      <div class="container">
+        <h2 id="comenzi-h2"><i class="fas fa-table-list" aria-hidden="true"></i> Comenzi</h2>
+ 
+        <!-- Filters -->
+        <div class="filters" role="search" aria-label="Filtrare comenzi">
+          <select id="filterStatus" onchange="render()" aria-label="Filtrează status" style="max-width:180px">
+            <option value="all">Toate statusurile</option>
+            <option value="procesat">Procesat</option>
+            <option value="în drum">În drum</option>
+            <option value="livrat">Livrat</option>
+            <option value="anulat">Anulat</option>
+          </select>
+          <select id="filterPriority" onchange="render()" aria-label="Filtrează prioritate" style="max-width:150px">
+            <option value="all">Toate prioritățile</option>
+            <option value="high">Ridicat</option>
+            <option value="medium">Mediu</option>
+            <option value="low">Scăzut</option>
+          </select>
+          <input id="searchClient" placeholder="Caută client / oraș…" maxlength="30" oninput="render()"
+                 aria-label="Caută client sau oraș" style="max-width:200px">
+          <input id="searchAWB" placeholder="Caută AWB…" maxlength="20" oninput="render()"
+                 aria-label="Caută AWB" style="max-width:160px">
+          <select id="filterSort" onchange="render()" aria-label="Sortare" class="filter-sort">
+            <option value="newest">Cele mai noi</option>
+            <option value="oldest">Cele mai vechi</option>
+            <option value="name-az">Nume A-Z</option>
+            <option value="name-za">Nume Z-A</option>
+            <option value="city">Oraș A-Z</option>
+          </select>
+          <button class="btn btn-sm btn-ghost" onclick="resetFilters()" aria-label="Resetează filtrele" title="Reset filtre">
+            <i class="fas fa-filter-circle-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+ 
+        <!-- Bulk Actions Bar -->
+        <div class="bulk-bar" id="bulkBar" role="toolbar" aria-label="Acțiuni în masă">
+          <span class="bulk-count" id="bulkCount">0 selectate</span>
+          <button class="btn btn-sm" onclick="bulkChangeStatus('livrat')" aria-label="Marchează selectate ca livrate">
+            <i class="fas fa-check" aria-hidden="true"></i> Marchează livrat
+          </button>
+          <button class="btn btn-sm" onclick="bulkChangeStatus('anulat')" style="background:var(--red);color:#fff" aria-label="Anulează selectate">
+            <i class="fas fa-ban" aria-hidden="true"></i> Anulează
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="bulkDelete()" aria-label="Șterge selectate">
+            <i class="fas fa-trash" aria-hidden="true"></i> Șterge
+          </button>
+          <button class="btn btn-sm btn-ghost" onclick="clearSelection()" aria-label="Anulează selecția">
+            <i class="fas fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+ 
+        <!-- Table -->
+        <div class="table-wrap" role="region" aria-label="Tabel comenzi">
+          <table aria-label="Lista comenzilor">
+            <thead>
+              <tr>
+                <th scope="col" style="width:40px">
+                  <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"
+                         aria-label="Selectează toate comenzile" style="width:auto;margin:0;cursor:pointer">
+                </th>
+                <th scope="col" onclick="setSortCol('name')" aria-sort="none">Client <span class="sort-icon">↕</span></th>
+                <th scope="col" onclick="setSortCol('city')" aria-sort="none">Oraș <span class="sort-icon">↕</span></th>
+                <th scope="col">Status</th>
+                <th scope="col">Prioritate</th>
+                <th scope="col" onclick="setSortCol('awb')" aria-sort="none">AWB <span class="sort-icon">↕</span></th>
+                <th scope="col">Greutate</th>
+                <th scope="col">Acțiuni</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable"></tbody>
+          </table>
+          <div class="table-footer" role="status" aria-live="polite">
+            <span>Total: <b id="footTotal">0</b></span>
+            <span>Procesate: <b id="footP" style="color:#f59e0b">0</b></span>
+            <span>În drum: <b id="footD" style="color:#38bdf8">0</b></span>
+            <span>Livrate: <b id="footL" style="color:#22c55e">0</b></span>
+            <span>Anulate: <b id="footA" style="color:var(--red)">0</b></span>
+            <div class="pagination" role="navigation" aria-label="Navigare pagini" id="pagination"></div>
+          </div>
+        </div>
+ 
+        <!-- Progress -->
+        <div class="progress-wrap" role="region" aria-label="Progres livrări">
+          <div class="progress-label">
+            <span>Progres livrări</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div id="bar"></div>
+          </div>
+        </div>
+ 
+        <!-- Export -->
+        <div class="export-btns">
+          <button class="btn btn-sm btn-ghost" onclick="exportCSV()" aria-label="Exportă comenzile în CSV">
+            <i class="fas fa-file-csv" aria-hidden="true"></i> Export CSV
+          </button>
+          <button class="btn btn-sm btn-ghost" onclick="exportJSON()" aria-label="Exportă comenzile în JSON">
+            <i class="fas fa-file-code" aria-hidden="true"></i> Export JSON
+          </button>
+          <button class="btn btn-sm btn-ghost" onclick="importJSON()" aria-label="Importă comenzi din JSON">
+            <i class="fas fa-file-import" aria-hidden="true"></i> Import JSON
+          </button>
+          <button class="btn btn-sm btn-ghost" onclick="printPage()" aria-label="Printează pagina">
+            <i class="fas fa-print" aria-hidden="true"></i> Print
+          </button>
+          <label class="btn btn-sm btn-ghost" style="cursor:pointer" aria-label="Importă din CSV">
+            <i class="fas fa-upload" aria-hidden="true"></i> Import CSV
+            <input type="file" accept=".csv" onchange="importCSV(event)" style="display:none" aria-hidden="true">
+          </label>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── HISTORY / TIMELINE ── -->
+    <section id="history" aria-labelledby="history-h2">
+      <div class="container">
+        <h2 id="history-h2"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Istoric Activitate</h2>
+        <div class="timeline" id="activityTimeline" role="list" aria-label="Activitate recentă">
+          <!-- filled by JS -->
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearHistory()" style="margin-top:1rem" aria-label="Curăță istoricul">
+          <i class="fas fa-trash" aria-hidden="true"></i> Curăță istoricul
+        </button>
+      </div>
+    </section>
+ 
+    <!-- ── TRACKER AWB ── -->
+    <section id="tracker" aria-labelledby="tracker-h2">
+      <div class="container">
+        <h2 id="tracker-h2"><i class="fas fa-map-location-dot" aria-hidden="true"></i> Tracker AWB <span class="section-badge">LIVE</span></h2>
+        <div class="tracker-grid">
+          <div>
+            <div style="margin-bottom:.75rem;display:flex;gap:.5rem">
+              <input id="trackerSearch" placeholder="Caută AWB sau client…" oninput="renderTracker()"
+                     aria-label="Caută AWB sau client pentru tracker" style="margin:0">
+            </div>
+            <div class="tracker-list" id="trackerList" role="list" aria-label="Lista comenzilor pentru tracking"></div>
+          </div>
+          <div class="tracker-map-area">
+            <div class="tracker-map-header">
+              <span id="trackerTitle">Selectează o comandă</span>
+              <span id="trackerEtaBadge" class="tag tag-orange" style="display:none"></span>
+            </div>
+            <div class="tracker-map-frame" id="trackerMapFrame">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21762.34220208797!2d28.832178!3d47.010452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c3628b769a1%3A0x37d1d6305749dd3e!2sChișinău%2C%20Moldova!5e0!3m2!1sro!2smd!4v1715000000000!5m2!1sro!2smd"
+                title="Hartă Chișinău"
+                allowfullscreen loading="lazy"
+                referrerpolicy="no-referrer"
+                aria-label="Hartă Google Maps">
+              </iframe>
+            </div>
+            <div class="tracker-timeline" id="trackerTimeline" role="list" aria-label="Timeline livrare">
+              <div class="t-step"><div class="t-dot"></div><span>Preluat</span></div>
+              <div class="t-line"></div>
+              <div class="t-step"><div class="t-dot"></div><span>Procesat</span></div>
+              <div class="t-line"></div>
+              <div class="t-step"><div class="t-dot"></div><span>În drum</span></div>
+              <div class="t-line"></div>
+              <div class="t-step"><div class="t-dot"></div><span>Livrat</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── STATISTICI ── -->
+    <section id="statistici" aria-labelledby="stat-h2">
+      <div class="container">
+        <h2 id="stat-h2"><i class="fas fa-chart-bar" aria-hidden="true"></i> Statistici</h2>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Distribuție Status</h3>
+            <canvas id="chart" aria-label="Grafic distribuție statusuri" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Distribuție % (Pie)</h3>
+            <canvas id="chartPie" aria-label="Grafic pie distribuție" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Comenzi pe Zi (Săptămână)</h3>
+            <canvas id="chartLine" aria-label="Grafic line comenzi săptămână" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Distribuție Prioritate</h3>
+            <canvas id="chartPriority" aria-label="Grafic prioritate comenzi" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── WEATHER ── -->
+    <section id="weather-section" aria-labelledby="weather-h2">
+      <div class="container">
+        <h2 id="weather-h2"><i class="fas fa-cloud-sun" aria-hidden="true"></i> Meteo Moldova <span class="section-badge">SIMULAT</span></h2>
+        <div class="weather-grid">
+          <div class="weather-widget reveal" aria-label="Vreme Chișinău">
+            <div class="weather-main">
+              <span class="weather-icon" aria-hidden="true">⛅</span>
+              <div>
+                <div class="weather-temp" id="wt-temp1">22°C</div>
+                <div class="weather-desc" id="wt-desc1">Parțial înnorat</div>
+              </div>
+            </div>
+            <div class="weather-city"><i class="fas fa-location-dot" aria-hidden="true" style="color:var(--accent)"></i> Chișinău</div>
+            <div class="weather-details">
+              <div class="weather-detail"><i class="fas fa-droplet" aria-hidden="true"></i> Umiditate: <b id="wt-hum1">65%</b></div>
+              <div class="weather-detail"><i class="fas fa-wind" aria-hidden="true"></i> Vânt: <b id="wt-wind1">12 km/h</b></div>
+              <div class="weather-detail"><i class="fas fa-eye" aria-hidden="true"></i> Vizib.: <b>10 km</b></div>
+              <div class="weather-detail"><i class="fas fa-gauge" aria-hidden="true"></i> Presiune: <b>1013 hPa</b></div>
+            </div>
+            <div class="weather-forecast" id="wt-forecast1" aria-label="Prognoză 5 zile"></div>
+          </div>
+          <div class="weather-widget reveal" aria-label="Vreme Bălți">
+            <div class="weather-main">
+              <span class="weather-icon" aria-hidden="true">🌤️</span>
+              <div>
+                <div class="weather-temp" id="wt-temp2">19°C</div>
+                <div class="weather-desc" id="wt-desc2">Ușor înnorat</div>
+              </div>
+            </div>
+            <div class="weather-city"><i class="fas fa-location-dot" aria-hidden="true" style="color:var(--accent)"></i> Bălți</div>
+            <div class="weather-details">
+              <div class="weather-detail"><i class="fas fa-droplet" aria-hidden="true"></i> Umiditate: <b id="wt-hum2">70%</b></div>
+              <div class="weather-detail"><i class="fas fa-wind" aria-hidden="true"></i> Vânt: <b id="wt-wind2">15 km/h</b></div>
+              <div class="weather-detail"><i class="fas fa-eye" aria-hidden="true"></i> Vizib.: <b>9 km</b></div>
+              <div class="weather-detail"><i class="fas fa-gauge" aria-hidden="true"></i> Presiune: <b>1010 hPa</b></div>
+            </div>
+            <div class="weather-forecast" id="wt-forecast2" aria-label="Prognoză 5 zile"></div>
+          </div>
+          <div class="weather-widget reveal" aria-label="Vreme Cahul">
+            <div class="weather-main">
+              <span class="weather-icon" aria-hidden="true">☀️</span>
+              <div>
+                <div class="weather-temp" id="wt-temp3">25°C</div>
+                <div class="weather-desc" id="wt-desc3">Însorit</div>
+              </div>
+            </div>
+            <div class="weather-city"><i class="fas fa-location-dot" aria-hidden="true" style="color:var(--accent)"></i> Cahul</div>
+            <div class="weather-details">
+              <div class="weather-detail"><i class="fas fa-droplet" aria-hidden="true"></i> Umiditate: <b id="wt-hum3">55%</b></div>
+              <div class="weather-detail"><i class="fas fa-wind" aria-hidden="true"></i> Vânt: <b id="wt-wind3">8 km/h</b></div>
+              <div class="weather-detail"><i class="fas fa-eye" aria-hidden="true"></i> Vizib.: <b>12 km</b></div>
+              <div class="weather-detail"><i class="fas fa-gauge" aria-hidden="true"></i> Presiune: <b>1016 hPa</b></div>
+            </div>
+            <div class="weather-forecast" id="wt-forecast3" aria-label="Prognoză 5 zile"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── TOOLS ── -->
+    <section id="tools" aria-labelledby="tools-h2">
+      <div class="container">
+        <h2 id="tools-h2"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i> Unelte</h2>
+        <div class="tools-grid">
+          <!-- Notes -->
+          <div class="card" aria-labelledby="notes-h3">
+            <h3 id="notes-h3"><i class="fas fa-note-sticky" aria-hidden="true"></i> Notițe Avansate</h3>
+            <div class="notes-toolbar" role="toolbar" aria-label="Formatare notițe">
+              <button class="notes-tool-btn" onclick="insertText('**','**')" aria-label="Bold">B</button>
+              <button class="notes-tool-btn" onclick="insertText('_','_')" aria-label="Italic" style="font-style:italic">I</button>
+              <button class="notes-tool-btn" onclick="insertText('# ','')" aria-label="Titlu">H1</button>
+              <button class="notes-tool-btn" onclick="insertText('- ','')" aria-label="Listă">• </button>
+              <button class="notes-tool-btn" onclick="insertText('> ','')" aria-label="Citat">❝</button>
+              <button class="notes-tool-btn" onclick="clearNotes()" aria-label="Șterge notițe">🗑️</button>
+            </div>
+            <label for="notes" class="sr-only">Notițe</label>
+            <textarea id="notes" maxlength="2000" oninput="updateNotesStats()"
+                      aria-label="Spațiu notițe" placeholder="Scrie notițele tale…"></textarea>
+            <div class="notes-stats" id="notesStats">0 / 2000 caractere · 0 cuvinte</div>
+            <div style="display:flex;gap:.5rem;margin-top:.75rem">
+              <button class="btn btn-sm" onclick="saveNotes()" aria-label="Salvează">
+                <i class="fas fa-floppy-disk" aria-hidden="true"></i> Salvează
+              </button>
+              <button class="btn btn-sm btn-ghost" onclick="copyNotes()" aria-label="Copiază notițele">
+                <i class="fas fa-copy" aria-hidden="true"></i> Copiază
+              </button>
+            </div>
+          </div>
+ 
+          <!-- Calculator -->
+          <div class="card" aria-labelledby="calc-h3">
+            <h3 id="calc-h3"><i class="fas fa-calculator" aria-hidden="true"></i> Calculator Livrare</h3>
+            <div class="form-group">
+              <label for="km">Distanță (km)</label>
+              <input id="km" type="number" placeholder="ex: 150" min="1" max="10000" aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="calcWeight">Greutate (kg)</label>
+              <input id="calcWeight" type="number" placeholder="ex: 2.5" min="0.1" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="calcPriority">Tip livrare</label>
+              <select id="calcPriority" aria-label="Tip livrare">
+                <option value="standard">Standard (5 MDL/km)</option>
+                <option value="express">Express (8 MDL/km)</option>
+                <option value="same-day">Same Day (12 MDL/km)</option>
+              </select>
+            </div>
+            <button class="btn btn-sm" onclick="calcPrice()" aria-label="Calculează">
+              <i class="fas fa-calculator" aria-hidden="true"></i> Calculează
+            </button>
+            <div class="price-result" id="price" role="status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── CURRENCY CONVERTER ── -->
+    <section id="currency" aria-labelledby="currency-h2">
+      <div class="container">
+        <h2 id="currency-h2"><i class="fas fa-coins" aria-hidden="true"></i> Convertor Valutar <span class="section-badge">LIVE RATE</span></h2>
+        <div class="currency-card">
+          <div class="currency-row">
+            <div style="flex:1">
+              <label for="currAmount">Sumă</label>
+              <input id="currAmount" type="number" placeholder="100" min="0" step="0.01" value="100" oninput="convertCurrency()">
+            </div>
+            <div style="flex:1">
+              <label for="currFrom">Din</label>
+              <select id="currFrom" onchange="convertCurrency()" aria-label="Monedă sursă">
+                <option value="MDL">🇲🇩 MDL</option>
+                <option value="EUR">🇪🇺 EUR</option>
+                <option value="USD">🇺🇸 USD</option>
+                <option value="RON">🇷🇴 RON</option>
+                <option value="UAH">🇺🇦 UAH</option>
+                <option value="GBP">🇬🇧 GBP</option>
+                <option value="RUB">🇷🇺 RUB</option>
+              </select>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="swapCurrency()" aria-label="Inversează valutele" style="align-self:flex-end;margin-bottom:6px">⇄</button>
+            <div style="flex:1">
+              <label for="currTo">În</label>
+              <select id="currTo" onchange="convertCurrency()" aria-label="Monedă destinație">
+                <option value="EUR">🇪🇺 EUR</option>
+                <option value="MDL">🇲🇩 MDL</option>
+                <option value="USD">🇺🇸 USD</option>
+                <option value="RON">🇷🇴 RON</option>
+                <option value="UAH">🇺🇦 UAH</option>
+                <option value="GBP">🇬🇧 GBP</option>
+                <option value="RUB">🇷🇺 RUB</option>
+              </select>
+            </div>
+          </div>
+          <div class="currency-amount-result" id="currResult" role="status" aria-live="polite">—</div>
+          <div class="rate-info" id="rateInfo"></div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── LEADERBOARD ── -->
+    <section id="leaderboard" aria-labelledby="lb-h2">
+      <div class="container">
+        <h2 id="lb-h2"><i class="fas fa-trophy" aria-hidden="true"></i> Top Curieri <span class="section-badge">LUNA ACEASTA</span></h2>
+        <div class="lb-list" id="leaderboardList" role="list" aria-label="Clasament curieri"></div>
+        <button class="btn btn-sm btn-ghost mt-md" onclick="shuffleLeaderboard()" aria-label="Actualizează clasamentul">
+          <i class="fas fa-rotate" aria-hidden="true"></i> Actualizează
+        </button>
+      </div>
+    </section>
+ 
+    <!-- ── PHOTO UPLOAD ── -->
+    <section id="photos" aria-labelledby="photos-h2">
+      <div class="container">
+        <h2 id="photos-h2"><i class="fas fa-images" aria-hidden="true"></i> Galerie Foto Comenzi</h2>
+        <div class="photo-area" id="dropZone" onclick="document.getElementById('photoInput').click()"
+             ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropPhoto(event)"
+             role="button" tabindex="0" aria-label="Zona de încărcare fotografii — click sau drag&drop"
+             onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('photoInput').click()">
+          <i class="fas fa-cloud-arrow-up" aria-hidden="true"></i>
+          <p>Click sau drag &amp; drop fotografii ale coletelor</p>
+          <p style="font-size:.78rem;margin-top:.3rem">JPG, PNG, WebP — max 5 MB / imagine</p>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" multiple onchange="loadPhotos(event)"
+               style="display:none" aria-hidden="true">
+        <div id="photoPreview" role="list" aria-label="Previzualizare fotografii"></div>
+        <div class="photo-counter" id="photoCounter" aria-live="polite"></div>
+      </div>
+    </section>
+ 
+    <!-- ── INVOICE GENERATOR ── -->
+    <section id="invoice" aria-labelledby="invoice-h2">
+      <div class="container">
+        <h2 id="invoice-h2"><i class="fas fa-file-invoice" aria-hidden="true"></i> Generator Factură</h2>
+        <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:1.5rem" id="invoiceGrid">
+          <div class="card" style="align-self:start">
+            <h3>Date factură</h3>
+            <div class="form-group">
+              <label for="inv-client">Client</label>
+              <input id="inv-client" placeholder="Numele clientului">
+            </div>
+            <div class="form-group">
+              <label for="inv-service">Serviciu</label>
+              <input id="inv-service" placeholder="Livrare standard" value="Livrare standard">
+            </div>
+            <div class="form-group">
+              <label for="inv-km">Kilometri</label>
+              <input id="inv-km" type="number" placeholder="150" min="1">
+            </div>
+            <div class="form-group">
+              <label for="inv-type">Tip livrare</label>
+              <select id="inv-type" onchange="generateInvoice()">
+                <option value="standard">Standard</option>
+                <option value="express">Express</option>
+                <option value="same-day">Same Day</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:.5rem;margin-top:.5rem">
+              <button class="btn btn-sm" onclick="generateInvoice()" aria-label="Generează factura">
+                <i class="fas fa-file-invoice" aria-hidden="true"></i> Generează
+              </button>
+              <button class="btn btn-sm btn-ghost" onclick="printInvoice()" aria-label="Printează factura">
+                <i class="fas fa-print" aria-hidden="true"></i> Print
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="invoice-preview" id="invoicePreview" aria-label="Previzualizare factură" aria-live="polite">
+              <div style="text-align:center;color:#999;padding:2rem">
+                Completează datele și apasă "Generează"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── KEYBOARD SHORTCUTS ── -->
+    <section id="shortcuts" aria-labelledby="shortcuts-h2">
+      <div class="container">
+        <h2 id="shortcuts-h2"><i class="fas fa-keyboard" aria-hidden="true"></i> Comenzi Tastatură</h2>
+        <div class="shortcuts-grid" role="list" aria-label="Lista comenzilor de tastatură">
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>N</kbd></div>
+            <span class="shortcut-desc">Adaugă comandă nouă</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>S</kbd></div>
+            <span class="shortcut-desc">Focus căutare</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>E</kbd></div>
+            <span class="shortcut-desc">Export CSV</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>P</kbd></div>
+            <span class="shortcut-desc">Print raport</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>T</kbd></div>
+            <span class="shortcut-desc">Toggle muzică</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Esc</kbd></div>
+            <span class="shortcut-desc">Închide modal</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>H</kbd></div>
+            <span class="shortcut-desc">Acasă (scroll top)</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>L</kbd></div>
+            <span class="shortcut-desc">Logout</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Alt</kbd>+<kbd>1-8</kbd></div>
+            <span class="shortcut-desc">Schimbă tema</span>
+          </div>
+          <div class="shortcut-item" role="listitem">
+            <div class="shortcut-keys"><kbd>Ctrl</kbd>+<kbd>S</kbd></div>
+            <span class="shortcut-desc">Salvează notițe</span>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── SECURITATE ── -->
+    <section id="securitate" aria-labelledby="sec-h2">
+      <div class="container">
+        <h2 id="sec-h2"><i class="fas fa-shield-halved" aria-hidden="true"></i> Securitate</h2>
+        <div class="security-grid">
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">🛡️</div>
+            <h3>Protecție XSS</h3>
+            <p>Sanitizare completă a inputurilor.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:100%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">🔒</div>
+            <h3>CSP Activ</h3>
+            <p>Content Security Policy activă.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:90%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">✅</div>
+            <h3>Validare HTML5</h3>
+            <p>Pattern regex pe toate câmpurile.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:100%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">🚫</div>
+            <h3>Anti-Clickjacking</h3>
+            <p>Detectare iframe extern.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:80%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">♿</div>
+            <h3>WAI-ARIA</h3>
+            <p>Landmark roles, labels, focus management.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:100%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">⌨️</div>
+            <h3>Tab Navigation</h3>
+            <p>Navigare completă prin tastatură.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:100%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">🔑</div>
+            <h3>Auth System</h3>
+            <p>Sistem login/register cu validare.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:85%"></div></div>
+          </div>
+          <div class="sec-item reveal">
+            <div class="sec-icon" aria-hidden="true">📊</div>
+            <h3>Password Strength</h3>
+            <p>Indicator putere parolă la register.</p>
+            <div class="sec-score-bar"><div class="sec-score-fill" style="width:90%"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── MULTIMEDIA ── -->
+    <section id="multimedia" aria-labelledby="media-h2">
+      <div class="container">
+        <h2 id="media-h2"><i class="fas fa-photo-film" aria-hidden="true"></i> Multimedia</h2>
+        <div class="media-grid">
+          <div>
+            <h3>Video Prezentare</h3>
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/LGELjGb9pbc?rel=0&modestbranding=1"
+              title="Video FastCourier"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"
+              referrerpolicy="no-referrer"
+              aria-label="Video YouTube FastCourier">
+            </iframe>
+          </div>
+          <div>
+            <h3>Hartă Chișinău</h3>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21762.34220208797!2d28.832178!3d47.010452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c3628b769a1%3A0x37d1d6305749dd3e!2sChișinău%2C%20Moldova!5e0!3m2!1sro!2smd!4v1715000000000!5m2!1sro!2smd"
+              title="Harta Chișinău"
+              allowfullscreen loading="lazy"
+              referrerpolicy="no-referrer"
+              aria-label="Hartă Google Maps Chișinău">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── CONTACT FORM ── -->
+    <section id="contact-form-section" aria-labelledby="cf-h2">
+      <div class="container">
+        <h2 id="cf-h2"><i class="fas fa-paper-plane" aria-hidden="true"></i> Trimite Mesaj</h2>
+        <div class="contact-grid">
+          <div class="contact-form-card">
+            <div id="contactFormWrapper">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cf-name">Nume complet *</label>
+                  <input id="cf-name" placeholder="Ion Popescu" maxlength="50" autocomplete="name">
+                </div>
+                <div class="form-group">
+                  <label for="cf-email">Email *</label>
+                  <input id="cf-email" type="email" placeholder="ion@example.com" maxlength="80" autocomplete="email">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cf-phone">Telefon</label>
+                  <input id="cf-phone" type="tel" placeholder="+373 XX XXX XXX" maxlength="20" autocomplete="tel">
+                </div>
+                <div class="form-group">
+                  <label for="cf-subject">Subiect *</label>
+                  <select id="cf-subject" aria-label="Subiect mesaj">
+                    <option value="">Alege subiectul</option>
+                    <option value="tracking">Întrebare tracking AWB</option>
+                    <option value="pricing">Informații prețuri</option>
+                    <option value="complaint">Reclamație</option>
+                    <option value="partnership">Parteneriat</option>
+                    <option value="other">Alt subiect</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cf-message">Mesaj * <span id="cfCharCount" class="char-count">0/500</span></label>
+                <textarea id="cf-message" placeholder="Scrie mesajul tău…" maxlength="500"
+                          oninput="updateCFCount()" rows="5" aria-required="true"></textarea>
+              </div>
+              <div style="display:flex;gap:.5rem;align-items:center">
+                <button class="btn" onclick="submitContactForm()" aria-label="Trimite mesajul">
+                  <i class="fas fa-paper-plane" aria-hidden="true"></i> Trimite
+                </button>
+                <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--muted);cursor:pointer">
+                  <input type="checkbox" id="cf-gdpr" style="width:auto;margin:0"> Sunt de acord cu politica de confidențialitate
+                </label>
+              </div>
+            </div>
+            <div class="form-sent" id="formSent" aria-live="polite">
+              <i class="fas fa-circle-check" style="color:var(--green)" aria-hidden="true"></i>
+              Mesaj trimis cu succes! Vă vom contacta în 24h.
+              <button class="btn btn-sm btn-ghost" onclick="resetContactForm()">Trimite alt mesaj</button>
+            </div>
+          </div>
+          <div class="contact-info">
+            <div class="contact-info-item reveal">
+              <div class="contact-info-icon" aria-hidden="true"><i class="fas fa-location-dot"></i></div>
+              <div class="contact-info-text">
+                <h4>Adresă</h4>
+                <p>Str. Mihai Eminescu 12, Chișinău, Moldova</p>
+              </div>
+            </div>
+            <div class="contact-info-item reveal">
+              <div class="contact-info-icon" aria-hidden="true"><i class="fas fa-phone"></i></div>
+              <div class="contact-info-text">
+                <h4>Telefon</h4>
+                <p>+373 22 123 456</p>
+                <p>+373 79 987 654</p>
+              </div>
+            </div>
+            <div class="contact-info-item reveal">
+              <div class="contact-info-icon" aria-hidden="true"><i class="fas fa-envelope"></i></div>
+              <div class="contact-info-text">
+                <h4>Email</h4>
+                <p>info@fastcourier.md</p>
+                <p>support@fastcourier.md</p>
+              </div>
+            </div>
+            <div class="contact-info-item reveal">
+              <div class="contact-info-icon" aria-hidden="true"><i class="fas fa-clock"></i></div>
+              <div class="contact-info-text">
+                <h4>Program</h4>
+                <p>Luni – Vineri: 08:00 – 20:00</p>
+                <p>Sâmbătă: 09:00 – 15:00</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── SOCIAL ── -->
+    <section id="contact" aria-labelledby="contact-h2">
+      <div class="container">
+        <h2 id="contact-h2"><i class="fas fa-share-nodes" aria-hidden="true"></i> Social & Contact</h2>
+        <p class="muted" style="margin-bottom:1rem">Găsește-ne pe rețelele sociale sau trimite-ne un mesaj direct.</p>
+        <nav aria-label="Rețele sociale">
+          <div class="social-links">
+            <a href="https://github.com" class="social-link" aria-label="GitHub" target="_blank" rel="noopener noreferrer"><i class="fab fa-github" aria-hidden="true"></i></a>
+            <a href="https://linkedin.com" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+            <a href="https://instagram.com" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://twitter.com" class="social-link" aria-label="Twitter/X" target="_blank" rel="noopener noreferrer"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://facebook.com" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+            <a href="https://t.me" class="social-link" aria-label="Telegram" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram" aria-hidden="true"></i></a>
+            <a href="https://youtube.com" class="social-link" aria-label="YouTube" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            <a href="https://viber.com" class="social-link" aria-label="Viber" target="_blank" rel="noopener noreferrer"><i class="fab fa-viber" aria-hidden="true"></i></a>
+          </div>
+        </nav>
+      </div>
+    </section>
+ 
+  </main>
+ 
+  <!-- FOOTER -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>FastCourier</h4>
+          <p style="font-size:.83rem;color:var(--muted);line-height:1.6">Platformă completă de management al livrărilor pentru Moldova.</p>
+          <div class="social-links" style="margin-top:.75rem">
+            <a href="#" class="social-link" aria-label="GitHub" style="width:34px;height:34px;font-size:.9rem"><i class="fab fa-github" aria-hidden="true"></i></a>
+            <a href="#" class="social-link" aria-label="LinkedIn" style="width:34px;height:34px;font-size:.9rem"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navigare</h4>
+          <ul>
+            <li><a href="#hero">Acasă</a></li>
+            <li><a href="#servicii">Servicii</a></li>
+            <li><a href="#adauga">Comenzi</a></li>
+            <li><a href="#tracker">Tracker AWB</a></li>
+            <li><a href="#statistici">Statistici</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Unelte</h4>
+          <ul>
+            <li><a href="#tools">Notițe</a></li>
+            <li><a href="#tools">Calculator</a></li>
+            <li><a href="#currency">Convertor Valutar</a></li>
+            <li><a href="#invoice">Generator Factură</a></li>
+            <li><a href="#shortcuts">Scurtături Tastatură</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Termeni și condiții</a></li>
+            <li><a href="#">Politica de confidențialitate</a></li>
+            <li><a href="#">GDPR</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 <strong>FastCourier PRO MAX ULTIMATE v2</strong> · WAI-ARIA &amp; WCAG 2.1 AA</p>
+        <p style="margin-top:.4rem">🛡️ Securizat · ♿ Accesibil · 📱 Responsive · 🚀 Performant</p>
+      </div>
+    </div>
+  </footer>
+ 
+</div><!-- /app -->
+ 
+<!-- ── EDIT MODAL ── -->
+<div id="editModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="modal-title" style="margin:0;font-size:1.15rem">
+        <i class="fas fa-pen" aria-hidden="true"></i> Editare Comandă
+      </h2>
+      <button class="modal-close" onclick="closeModal()" aria-label="Închide editarea">
+        <i class="fas fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="form-group"><label for="editClient">Nume client</label><input id="editClient" maxlength="30" aria-required="true"></div>
+    <div class="form-group"><label for="editOras">Oraș</label><input id="editOras" maxlength="30" aria-required="true"></div>
+    <div class="form-group"><label for="editPhone">Telefon</label><input id="editPhone" maxlength="20" type="tel"></div>
+    <div class="form-group"><label for="editWeight">Greutate (kg)</label><input id="editWeight" maxlength="10" type="number" step="0.1"></div>
+    <div class="form-group"><label for="editStatus">Status</label>
+      <select id="editStatus" aria-label="Status">
+        <option value="procesat">Procesat</option>
+        <option value="în drum">În drum</option>
+        <option value="livrat">Livrat</option>
+        <option value="anulat">Anulat</option>
+      </select>
+    </div>
+    <div class="form-group"><label for="editPriority">Prioritate</label>
+      <select id="editPriority" aria-label="Prioritate">
+        <option value="low">🟢 Scăzut</option>
+        <option value="medium">🟡 Mediu</option>
+        <option value="high">🔴 Ridicat</option>
+      </select>
+    </div>
+    <div class="form-group"><label for="editNote">Notă</label><input id="editNote" maxlength="100"></div>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem">
+      <button class="btn" onclick="saveEdit()" aria-label="Salvează modificările"><i class="fas fa-floppy-disk" aria-hidden="true"></i> Salvează</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Anulează</button>
+    </div>
+  </div>
 </div>
-</section>
-
-<!-- TRACKING -->
-<section id="tracking" class="trackBox">
-<h2 class="title">Tracking colet</h2>
-<input id="code" placeholder="Cod colet">
-<button onclick="track()">Verifică</button>
-<p id="result"></p>
-</section>
-
-<!-- PRICE -->
-<section>
-<h2 class="title">Calculator preț</h2>
-<input id="kg" placeholder="Greutate kg">
-<button onclick="price()">Calculează</button>
-<p id="priceOut"></p>
-</section>
-
-<!-- FAQ -->
-<section>
-<h2 class="title">FAQ</h2>
-
-<div class="faq" onclick="faq(this)">Cât durează livrarea?</div>
-<div class="answer">1-2 zile lucrătoare</div>
-
-<div class="faq" onclick="faq(this)">Este sigur?</div>
-<div class="answer">Da, toate coletele sunt asigurate</div>
-
-<div class="faq" onclick="faq(this)">Pot urmări coletul?</div>
-<div class="answer">Da, live tracking</div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-<h2 class="title">Contact</h2>
-
-<input id="email" placeholder="Email">
-<textarea placeholder="Mesaj"></textarea>
-<button onclick="send()">Trimite</button>
-</section>
-
-<!-- NEWSLETTER -->
-<section>
-<h2 class="title">Newsletter</h2>
-<input placeholder="Email abonare">
-<button>Abonează-te</button>
-</section>
-
-<!-- MAP -->
-<section>
-<h2 class="title">Locația noastră</h2>
-<iframe width="100%" height="200"
-src="https://maps.google.com/maps?q=chisinau&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
-</section>
-
-<!-- ADMIN -->
-<section id="admin">
-<h2>Admin Panel</h2>
-<table>
-<thead>
-<tr><th>Client</th><th>Comandă</th></tr>
-</thead>
-<tbody id="orders"></tbody>
-</table>
-</section>
-
-<!-- MODAL ORDER -->
-<div class="modal" id="modal">
-<div class="modal-content">
-<h3>Comandă curier</h3>
-<input id="from" placeholder="De la">
-<input id="to" placeholder="Către">
-<button onclick="save()">Trimite</button>
-<button onclick="closeM()">Închide</button>
+ 
+<!-- ── QR MODAL ── -->
+<div id="qrModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="qr-title">
+  <div class="qr-modal-box">
+    <div class="modal-header">
+      <h2 id="qr-title" style="margin:0;font-size:1.1rem"><i class="fas fa-qrcode" aria-hidden="true"></i> QR Code AWB</h2>
+      <button class="modal-close" onclick="closeQR()" aria-label="Închide QR"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+    </div>
+    <div class="qr-awb-label" id="qrLabel"></div>
+    <div id="qrCanvas" role="img" aria-label="QR Code pentru AWB"></div>
+    <div style="display:flex;gap:.5rem;justify-content:center;margin-top:.75rem">
+      <button class="btn btn-sm" onclick="downloadQR()" aria-label="Descarcă QR Code">
+        <i class="fas fa-download" aria-hidden="true"></i> Descarcă
+      </button>
+      <button class="btn btn-sm btn-ghost" onclick="closeQR()">Închide</button>
+    </div>
+  </div>
 </div>
+ 
+<!-- ── TOAST ── -->
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+ 
+<!-- ── AUDIO ── -->
+<audio id="sound" aria-hidden="true">
+  <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mpeg">
+</audio>
+ 
+<!-- ── TOP BTN ── -->
+<button id="topBtn" onclick="scrollToTop()" aria-label="Sus" title="Înapoi sus">
+  <i class="fas fa-chevron-up" aria-hidden="true"></i>
+</button>
+ 
+<!-- ── MUSIC FAB ── -->
+<button class="music-fab" onclick="toggleMusicPlayer()" aria-label="Player muzică" aria-expanded="false" title="Player muzică">
+  <i class="fas fa-music" aria-hidden="true"></i>
+</button>
+ 
+<!-- ── MUSIC PLAYER ── -->
+<div id="music-player" role="complementary" aria-label="Player muzică">
+  <div class="player-title">
+    🎵 Muzică Ambientală
+    <div class="music-eq" aria-hidden="true" id="musicEQ">
+      <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+    </div>
+  </div>
+  <div class="player-track" id="playerTrack">Lofi Hip Hop – Relaxing Study</div>
+  <div class="player-controls" role="group" aria-label="Controale player">
+    <button class="player-btn" onclick="prevTrack()" aria-label="Piesa anterioară"><i class="fas fa-backward" aria-hidden="true"></i></button>
+    <button class="player-btn" id="playBtn" onclick="togglePlay()" aria-label="Play/Pause"><i class="fas fa-play" aria-hidden="true"></i></button>
+    <button class="player-btn" onclick="nextTrack()" aria-label="Piesa următoare"><i class="fas fa-forward" aria-hidden="true"></i></button>
+    <button class="player-btn" id="shuffleBtn" onclick="toggleShuffle()" aria-label="Redare aleatorie"><i class="fas fa-shuffle" aria-hidden="true"></i></button>
+  </div>
+  <div class="player-progress">
+    <div class="player-prog-bar" onclick="seekTrack(event)" aria-label="Progres melodie">
+      <div class="player-prog-fill" id="progFill"></div>
+    </div>
+    <div class="player-times"><span id="pTime">0:00</span><span id="pDur">0:00</span></div>
+  </div>
+  <div class="player-vol">
+    <i class="fas fa-volume-low" aria-hidden="true"></i>
+    <input type="range" id="volSlider" min="0" max="100" value="70"
+           oninput="setVolume(this.value)" aria-label="Volum">
+    <span id="volDisplay">70%</span>
+  </div>
 </div>
-
-<footer>
-<p>© 2026 FastCourier Pro</p>
-</footer>
-
+ 
 <script>
-
-/* DARK MODE */
-function dark(){
-document.body.classList.toggle("dark");
+/* ============================================ */
+/* UTILITIES                                    */
+/* ============================================ */
+function sanitize(text){
+  return String(text)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
 }
-
-/* MODAL */
-function openOrder(){
-document.getElementById("modal").style.display="block";
+function genAWB(){
+  return 'AWB-'+Math.random().toString(36).substr(2,8).toUpperCase();
 }
-
-function closeM(){
-document.getElementById("modal").style.display="none";
+function fmtDate(d){
+  return new Date(d).toLocaleDateString('ro-MD', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
 }
-
-/* SAVE ORDER */
-function save(){
-let f=document.getElementById("from").value;
-let t=document.getElementById("to").value;
-
-let data=JSON.parse(localStorage.getItem("orders")||"[]");
-data.push({f,t});
-localStorage.setItem("orders",JSON.stringify(data));
-
-alert("Comandă salvată!");
-closeM();
+ 
+/* ============================================ */
+/* PARTICLES                                    */
+/* ============================================ */
+function initParticles(){
+  const container = document.getElementById('particles');
+  const N = window.innerWidth < 600 ? 12 : 22;
+  for(let i=0;i<N;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random()*6+2;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*20+15}s;
+      animation-delay:${Math.random()*15}s;
+      --drift:${(Math.random()-0.5)*200}px;
+    `;
+    container.appendChild(p);
+  }
 }
-
-/* TRACK */
-function track(){
-let c=document.getElementById("code").value;
-document.getElementById("result").innerText=
-c.length>3?"În tranzit 🚚":"Cod invalid";
+initParticles();
+ 
+/* ============================================ */
+/* USERS / AUTH                                 */
+/* ============================================ */
+function getUsers(){ return JSON.parse(localStorage.getItem('fc_users')||'[]'); }
+function saveUsers(u){ localStorage.setItem('fc_users',JSON.stringify(u)); }
+ 
+// Ensure demo accounts exist
+(function seedDemoUsers(){
+  const users = getUsers();
+  const demos = [{user:'admin',pass:'admin123'},{user:'curier',pass:'curier123'}];
+  demos.forEach(d=>{
+    if(!users.find(u=>u.user===d.user)) users.push(d);
+  });
+  saveUsers(users);
+})();
+ 
+function switchTab(tab){
+  document.getElementById('panel-login').style.display    = tab==='login'    ? '' : 'none';
+  document.getElementById('panel-register').style.display = tab==='register' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('tab-login').setAttribute('aria-selected', tab==='login');
+  document.getElementById('tab-register').setAttribute('aria-selected', tab==='register');
 }
-
-/* PRICE */
-function price(){
-let kg=document.getElementById("kg").value;
-document.getElementById("priceOut").innerText="Preț: "+(kg*9)+" lei";
+ 
+function checkStrength(){
+  const p = document.getElementById('regPass').value;
+  let score = 0;
+  if(p.length >= 6)  score++;
+  if(p.length >= 10) score++;
+  if(/[A-Z]/.test(p) && /[0-9]/.test(p)) score++;
+  if(/[^A-Za-z0-9]/.test(p)) score++;
+  const bars = ['sb1','sb2','sb3','sb4'];
+  const labels = ['','Slabă','Medie','Bună','Puternică'];
+  const cls    = ['','weak','weak','medium','strong'];
+  bars.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.className = 'strength-bar'+(i<score ? ' '+cls[score] : '');
+  });
+  document.getElementById('strengthLabel').textContent = labels[score] || '';
 }
-
-/* FAQ */
-function faq(el){
-let ans=el.nextElementSibling;
-ans.style.display=ans.style.display==="block"?"none":"block";
+ 
+function register(){
+  const u  = document.getElementById('regUser').value.trim();
+  const p  = document.getElementById('regPass').value;
+  const p2 = document.getElementById('regPass2').value;
+  const err = document.getElementById('regError');
+  const uRx = /^[A-Za-z0-9]{3,20}$/;
+  if(!uRx.test(u))    { err.textContent='❌ Username: 3-20 litere/cifre'; return; }
+  if(p.length < 6)    { err.textContent='❌ Parolă: minim 6 caractere'; return; }
+  if(p !== p2)        { err.textContent='❌ Parolele nu coincid'; return; }
+  const users = getUsers();
+  if(users.find(x=>x.user===u)){ err.textContent='⚠️ Username deja există'; return; }
+  users.push({ user:sanitize(u), pass:sanitize(p) });
+  saveUsers(users);
+  err.style.color='var(--green)';
+  err.textContent='✅ Cont creat! Loghează-te acum.';
+  setTimeout(()=>switchTab('login'),1500);
 }
-
-/* LOGIN ADMIN */
+ 
 function login(){
-let p=prompt("Parolă:");
-if(p==="1234"){
-document.getElementById("admin").style.display="block";
-load();
+  const u   = sanitize(document.getElementById('loginUser').value.trim());
+  const p   = sanitize(document.getElementById('loginPass').value);
+  const err = document.getElementById('loginError');
+  const rem = document.getElementById('rememberMe').checked;
+  if(!u || !p){ err.textContent='❌ Completează toate câmpurile'; return; }
+  const users = getUsers();
+  const ok = users.find(x=>x.user===u && x.pass===p);
+  if(!ok){ err.textContent='❌ Username sau parolă greșite'; return; }
+  localStorage.setItem('fc_current', u);
+  if(rem) localStorage.setItem('fc_remember','1');
+  startApp();
 }
+ 
+function quickLogin(u,p){
+  document.getElementById('loginUser').value = u;
+  document.getElementById('loginPass').value = p;
+  login();
 }
-
-/* LOAD ORDERS */
-function load(){
-let list=document.getElementById("orders");
-list.innerHTML="";
-let data=JSON.parse(localStorage.getItem("orders")||"[]");
-
-data.forEach(o=>{
-let tr=document.createElement("tr");
-tr.innerHTML=`<td>Client</td><td>${o.f} ➝ ${o.t}</td>`;
-list.appendChild(tr);
+ 
+function logout(){
+  localStorage.removeItem('fc_current');
+  localStorage.removeItem('fc_remember');
+  location.reload();
+}
+ 
+/* ============================================ */
+/* STATE                                        */
+/* ============================================ */
+let chartBar=null, chartPie=null, chartLine=null, chartPriority=null;
+let editIndex  = null;
+let currentPriority = 'low';
+let selectedRows = new Set();
+let currentPage  = 1;
+const PAGE_SIZE  = 8;
+let sortCol = null, sortDir = 'asc';
+let activityLog = JSON.parse(localStorage.getItem('fc_activity')||'[]');
+ 
+/* ============================================ */
+/* ORDERS DATA                                  */
+/* ============================================ */
+let orders = JSON.parse(localStorage.getItem('fc_orders')) || [
+  { n:'Ion Popescu',    o:'Chișinău', s:'procesat', awb:genAWB(), pr:'low',    w:1.2, phone:'+373 79 111 222', note:'Fragil', ts:Date.now()-86400000*2 },
+  { n:'Maria Ionescu',  o:'Bălți',    s:'în drum',  awb:genAWB(), pr:'medium', w:3.5, phone:'+373 60 222 333', note:'',      ts:Date.now()-86400000 },
+  { n:'Vasile Rusu',    o:'Orhei',    s:'livrat',   awb:genAWB(), pr:'high',   w:0.8, phone:'+373 79 333 444', note:'Urgent',ts:Date.now()-86400000*3 },
+  { n:'Elena Cojocaru', o:'Soroca',   s:'procesat', awb:genAWB(), pr:'low',    w:2.0, phone:'',                note:'',      ts:Date.now()-86400000*4 },
+  { n:'Andrei Mîrzac',  o:'Cahul',    s:'în drum',  awb:genAWB(), pr:'high',   w:5.2, phone:'+373 68 444 555', note:'',      ts:Date.now()-3600000 },
+  { n:'Natalia Botnari',o:'Ungheni',  s:'livrat',   awb:genAWB(), pr:'medium', w:1.5, phone:'',                note:'',      ts:Date.now()-86400000*5 },
+  { n:'Dumitru Ciobanu',o:'Comrat',   s:'anulat',   awb:genAWB(), pr:'low',    w:0.5, phone:'+373 79 555 666', note:'Retras',ts:Date.now()-86400000*6 },
+  { n:'Olga Stratulat', o:'Strășeni', s:'procesat', awb:genAWB(), pr:'medium', w:4.0, phone:'',                note:'',      ts:Date.now()-7200000 },
+  { n:'Mihai Todea',    o:'Ialoveni', s:'în drum',  awb:genAWB(), pr:'low',    w:2.8, phone:'+373 60 666 777', note:'',      ts:Date.now()-1800000 },
+  { n:'Carmen Platon',  o:'Edineț',   s:'livrat',   awb:genAWB(), pr:'high',   w:1.1, phone:'',                note:'VIP',   ts:Date.now()-86400000*7 },
+];
+function saveOrders(){ localStorage.setItem('fc_orders',JSON.stringify(orders)); }
+ 
+/* ============================================ */
+/* ACTIVITY LOG                                 */
+/* ============================================ */
+function logActivity(title, desc, icon='📦'){
+  activityLog.unshift({ title, desc, icon, ts: Date.now() });
+  if(activityLog.length > 50) activityLog.pop();
+  localStorage.setItem('fc_activity', JSON.stringify(activityLog));
+  renderTimeline();
+  addNotification(title);
+}
+ 
+function renderTimeline(){
+  const container = document.getElementById('activityTimeline');
+  if(!container) return;
+  if(!activityLog.length){
+    container.innerHTML = '<p class="muted">Nicio activitate înregistrată.</p>';
+    return;
+  }
+  container.innerHTML = activityLog.slice(0,10).map((a,i)=>`
+    <div class="timeline-item" role="listitem" style="animation-delay:${i*.05}s">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-content">
+        <div class="timeline-time">${fmtDate(a.ts)}</div>
+        <div class="timeline-title">${a.icon} ${sanitize(a.title)}</div>
+        <div class="timeline-desc">${sanitize(a.desc)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+ 
+function clearHistory(){
+  activityLog=[];
+  localStorage.removeItem('fc_activity');
+  renderTimeline();
+  showToast('🗑️ Istoric curățat','info');
+}
+ 
+/* ============================================ */
+/* NOTIFICATIONS                                */
+/* ============================================ */
+let notifications = JSON.parse(localStorage.getItem('fc_notifs')||'[]');
+let notifUnread = 3;
+ 
+function addNotification(msg){
+  notifications.unshift({ msg, ts:Date.now(), read:false });
+  if(notifications.length > 30) notifications.pop();
+  notifUnread = notifications.filter(n=>!n.read).length;
+  localStorage.setItem('fc_notifs', JSON.stringify(notifications));
+  updateNotifBadge();
+  renderNotifList();
+}
+ 
+function updateNotifBadge(){
+  const el = document.getElementById('notifCount');
+  if(el){
+    el.textContent = notifUnread > 0 ? notifUnread : '';
+    el.style.display = notifUnread > 0 ? 'flex' : 'none';
+  }
+}
+ 
+function toggleNotifPanel(){
+  const el = document.getElementById('notifDropdown');
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen){
+    notifications.forEach(n=>n.read=true);
+    notifUnread=0;
+    localStorage.setItem('fc_notifs',JSON.stringify(notifications));
+    updateNotifBadge();
+    renderNotifList();
+  }
+}
+ 
+function renderNotifList(){
+  const container = document.getElementById('notifList');
+  if(!container) return;
+  if(!notifications.length){
+    container.innerHTML = '<p style="font-size:.82rem;color:var(--muted);text-align:center;padding:.5rem">Nicio notificare</p>';
+    return;
+  }
+  container.innerHTML = notifications.slice(0,15).map(n=>`
+    <div style="padding:.6rem .75rem;background:${n.read?'var(--surface2)':'rgba(56,189,248,.1)'};border-radius:8px;
+         border-left:3px solid ${n.read?'var(--muted)':'var(--accent)'};font-size:.8rem;">
+      <div style="font-weight:600;color:var(--text)">${sanitize(n.msg)}</div>
+      <div style="color:var(--muted);font-size:.72rem;margin-top:.2rem">${fmtDate(n.ts)}</div>
+    </div>
+  `).join('');
+}
+ 
+function clearNotifs(){
+  notifications=[];
+  notifUnread=0;
+  localStorage.removeItem('fc_notifs');
+  updateNotifBadge();
+  renderNotifList();
+  document.getElementById('notifDropdown').style.display='none';
+}
+ 
+// Close notif panel on outside click
+document.addEventListener('click',function(e){
+  const d = document.getElementById('notifDropdown');
+  const btn = document.querySelector('.notif-bell-btn');
+  if(d && !d.contains(e.target) && btn && !btn.contains(e.target)){
+    d.style.display='none';
+  }
 });
+ 
+/* ============================================ */
+/* PRIORITY                                     */
+/* ============================================ */
+function setPriority(p){
+  currentPriority=p;
+  ['low','medium','high'].forEach(x=>{
+    const btn = document.getElementById('p-'+x);
+    if(btn){
+      btn.className='priority-btn'+(p===x?' active-'+x:'');
+      btn.setAttribute('aria-pressed',p===x);
+    }
+  });
 }
-
-/* SEND CONTACT */
-function send(){
-alert("Mesaj trimis!");
+ 
+/* ============================================ */
+/* ADD ORDER                                    */
+/* ============================================ */
+function addOrder(){
+  const client = document.getElementById('inp-client').value.trim();
+  const oras   = document.getElementById('inp-oras').value.trim();
+  const phone  = document.getElementById('inp-phone').value.trim();
+  const weight = document.getElementById('inp-weight').value;
+  const note   = document.getElementById('inp-note').value.trim();
+  if(!client || !oras){ showToast('❌ Completează câmpurile obligatorii','error'); return; }
+  if(client.length<2||oras.length<2){ showToast('❌ Minim 2 caractere per câmp','error'); return; }
+  const ord = {
+    n:sanitize(client), o:sanitize(oras),
+    s:'procesat', awb:genAWB(),
+    pr:currentPriority, w:parseFloat(weight)||0,
+    phone:sanitize(phone), note:sanitize(note),
+    ts:Date.now()
+  };
+  orders.unshift(ord);
+  saveOrders(); render(); renderTracker();
+  clearAddForm();
+  document.getElementById('sound').play().catch(()=>{});
+  showToast(`✅ Comandă adăugată: ${sanitize(client)}`);
+  logActivity(`Comandă nouă — ${sanitize(client)}`, `Destinație: ${sanitize(oras)}, Prioritate: ${currentPriority}`, '📦');
+  animateStatCard('statTotal');
 }
-
-</script>
-
+ 
+function clearAddForm(){
+  document.getElementById('inp-client').value='';
+  document.getElementById('inp-oras').value='';
+  document.getElementById('inp-phone').value='';
+  document.getElementById('inp-weight').value='';
+  document.getElementById('inp-note').value='';
+  setPriority('low');
+}
+ 
+/* ============================================ */
+/* DELETE / CHANGE STATUS / EDIT               */
+/* ============================================ */
+function delOrder(i){
+  const name=orders[i].n;
+  if(!confirm('Ștergi comanda lui '+name+'?')) return;
+  logActivity(`Comandă ștearsă — ${name}`, `AWB: ${orders[i].awb}`, '🗑️');
+  orders.splice(i,1); saveOrders(); render(); renderTracker();
+  showToast('🗑️ Comandă ștearsă','info');
+}
+ 
+function changeStatus(i){
+  const nxt={'procesat':'în drum','în drum':'livrat','livrat':'procesat','anulat':'procesat'};
+  const old=orders[i].s;
+  orders[i].s=nxt[old];
+  saveOrders(); render(); renderTracker();
+  logActivity(`Status schimbat — ${orders[i].n}`, `${old} → ${orders[i].s}`, '🔄');
+  showToast(`🔄 Status: ${orders[i].n} → ${orders[i].s}`,'info');
+}
+ 
+function editOrder(i){
+  editIndex=i;
+  document.getElementById('editClient').value = orders[i].n;
+  document.getElementById('editOras').value   = orders[i].o;
+  document.getElementById('editPhone').value  = orders[i].phone||'';
+  document.getElementById('editWeight').value = orders[i].w||'';
+  document.getElementById('editStatus').value = orders[i].s;
+  document.getElementById('editPriority').value = orders[i].pr||'low';
+  document.getElementById('editNote').value   = orders[i].note||'';
+  document.getElementById('editModal').classList.add('open');
+  document.getElementById('editClient').focus();
+}
+ 
+function closeModal(){
+  document.getElementById('editModal').classList.remove('open');
+  editIndex=null;
+}
+ 
+function saveEdit(){
+  const c=sanitize(document.getElementById('editClient').value.trim());
+  const o=sanitize(document.getElementById('editOras').value.trim());
+  if(!c||!o){ showToast('❌ Completează câmpurile','error'); return; }
+  orders[editIndex].n      = c;
+  orders[editIndex].o      = o;
+  orders[editIndex].s      = document.getElementById('editStatus').value;
+  orders[editIndex].pr     = document.getElementById('editPriority').value;
+  orders[editIndex].phone  = sanitize(document.getElementById('editPhone').value);
+  orders[editIndex].w      = parseFloat(document.getElementById('editWeight').value)||0;
+  orders[editIndex].note   = sanitize(document.getElementById('editNote').value);
+  saveOrders(); render(); renderTracker(); closeModal();
+  logActivity(`Comandă editată — ${c}`, `Status: ${orders[editIndex].s}`, '✏️');
+  showToast('✏️ Comandă actualizată');
+}
+ 
+/* ============================================ */
+/* COPY AWB / FAVORITE / QR                     */
+/* ============================================ */
+function copyAWB(awb){
+  navigator.clipboard.writeText(awb).then(()=>showToast('📋 AWB copiat: '+awb,'info'));
+}
+ 
+function fav(i){ showToast('⭐ '+orders[i].n+' adăugat la favorite','info'); }
+ 
+function showQR(awb){
+  document.getElementById('qrLabel').textContent = awb;
+  const canvas=document.getElementById('qrCanvas');
+  canvas.innerHTML='';
+  try {
+    new QRCode(canvas,{ text:awb, width:200, height:200, colorDark:'#000', colorLight:'#fff' });
+  } catch(e){ canvas.innerHTML='<p style="color:var(--muted);padding:1rem">QRCode.js nedisponibil</p>'; }
+  document.getElementById('qrModal').classList.add('open');
+}
+ 
+function closeQR(){ document.getElementById('qrModal').classList.remove('open'); }
+ 
+function downloadQR(){
+  const c = document.querySelector('#qrCanvas canvas');
+  if(!c){ showToast('❌ Canvas nedisponibil','error'); return; }
+  const a=document.createElement('a');
+  a.download='qr-'+document.getElementById('qrLabel').textContent+'.png';
+  a.href=c.toDataURL();
+  a.click();
+  showToast('📥 QR descărcat','info');
+}
+ 
+/* ============================================ */
+/* BULK ACTIONS                                 */
+/* ============================================ */
+function toggleSelectAll(cb){
+  document.querySelectorAll('.row-cb').forEach(el=>{
+    el.checked=cb.checked;
+    const idx=parseInt(el.dataset.idx);
+    cb.checked ? selectedRows.add(idx) : selectedRows.delete(idx);
+    el.closest('tr').classList.toggle('row-selected',cb.checked);
+  });
+  updateBulkBar();
+}
+ 
+function toggleRowSelect(el,idx){
+  if(el.checked) selectedRows.add(idx);
+  else { selectedRows.delete(idx); document.getElementById('selectAll').checked=false; }
+  el.closest('tr').classList.toggle('row-selected',el.checked);
+  updateBulkBar();
+}
+ 
+function updateBulkBar(){
+  const bar=document.getElementById('bulkBar');
+  document.getElementById('bulkCount').textContent=selectedRows.size+' selectate';
+  bar.classList.toggle('visible',selectedRows.size>0);
+}
+ 
+function bulkChangeStatus(status){
+  const count = selectedRows.size;
+  [...selectedRows].forEach(i=>{ if(orders[i]) orders[i].s=status; });
+  saveOrders(); render(); clearSelection();
+  showToast(`✅ ${count} comenzi → ${status}`);
+}
+ 
+function bulkDelete(){
+  if(!selectedRows.size){ showToast('❌ Nimic selectat','error'); return; }
+  if(!confirm(`Ștergi ${selectedRows.size} comenzi?`)) return;
+  const indices=[...selectedRows].sort((a,b)=>b-a);
+  indices.forEach(i=>orders.splice(i,1));
+  saveOrders(); render(); clearSelection();
+  showToast(`🗑️ ${indices.length} comenzi șterse`,'info');
+}
+ 
+function clearSelection(){
+  selectedRows.clear();
+  document.querySelectorAll('.row-cb').forEach(el=>{ el.checked=false; el.closest('tr').classList.remove('row-selected'); });
+  const sa=document.getElementById('selectAll'); if(sa) sa.checked=false;
+  updateBulkBar();
+}
+ 
+/* ============================================ */
+/* SORT                                         */
+/* ============================================ */
+function setSortCol(col){
+  if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+  else { sortCol=col; sortDir='asc'; }
+  render();
+}
+ 
+function applySort(list){
+  const sortSel=document.getElementById('filterSort')?.value||'newest';
+  let arr=[...list];
+  if(sortCol){
+    arr.sort((a,b)=>{
+      let va='',vb='';
+      if(sortCol==='name'){ va=a.n; vb=b.n; }
+      else if(sortCol==='city'){ va=a.o; vb=b.o; }
+      else if(sortCol==='awb'){  va=a.awb; vb=b.awb; }
+      return sortDir==='asc'?va.localeCompare(vb,undefined,{sensitivity:'base'}):vb.localeCompare(va,undefined,{sensitivity:'base'});
+    });
+  } else {
+    if(sortSel==='newest')  arr.sort((a,b)=>(b.ts||0)-(a.ts||0));
+    if(sortSel==='oldest')  arr.sort((a,b)=>(a.ts||0)-(b.ts||0));
+    if(sortSel==='name-az') arr.sort((a,b)=>a.n.localeCompare(b.n));
+    if(sortSel==='name-za') arr.sort((a,b)=>b.n.localeCompare(a.n));
+    if(sortSel==='city')    arr.sort((a,b)=>a.o.localeCompare(b.o));
+  }
+  return arr;
+}
+ 
+/* ============================================ */
+/* RESET FILTERS                               */
+/* ============================================ */
+function resetFilters(){
+  document.getElementById('filterStatus').value='all';
+  document.getElementById('filterPriority').value='all';
+  document.getElementById('searchClient').value='';
+  document.getElementById('searchAWB').value='';
+  document.getElementById('filterSort').value='newest';
+  sortCol=null; sortDir='asc'; currentPage=1;
+  render();
+}
+ 
+/* ============================================ */
+/* RENDER TABLE                                 */
+/* ============================================ */
+function render(){
+  const f   = document.getElementById('filterStatus')?.value||'all';
+  const fp  = document.getElementById('filterPriority')?.value||'all';
+  const q   = (document.getElementById('searchClient')?.value||'').toLowerCase();
+  const aq  = (document.getElementById('searchAWB')?.value||'').toLowerCase();
+ 
+  let filtered = orders.filter((ord,i)=>{
+    if(f!=='all' && ord.s!==f) return false;
+    if(fp!=='all' && ord.pr!==fp) return false;
+    if(q && !ord.n.toLowerCase().includes(q) && !ord.o.toLowerCase().includes(q)) return false;
+    if(aq && !ord.awb.toLowerCase().includes(aq)) return false;
+    return true;
+  });
+ 
+  const sorted = applySort(filtered);
+  const totalPages = Math.max(1,Math.ceil(sorted.length/PAGE_SIZE));
+  if(currentPage>totalPages) currentPage=totalPages;
+  const pageData = sorted.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+ 
+  // Count all (not just current page)
+  let p=0,d=0,l=0,an=0;
+  orders.forEach(o=>{
+    if(o.s==='procesat')p++;
+    if(o.s==='în drum')d++;
+    if(o.s==='livrat')l++;
+    if(o.s==='anulat')an++;
+  });
+ 
+  const badgeCls = s=> s==='procesat'?'s-procesat':s==='în drum'?'s-drum':s==='livrat'?'s-livrat':'s-anulat';
+  const priCls   = p=> p==='high'?'p-high':p==='medium'?'p-medium':'p-low';
+  const priIcon  = p=> p==='high'?'🔴':p==='medium'?'🟡':'🟢';
+  const preLbl   = s=> s==='procesat'?'→ în drum':s==='în drum'?'→ livrat':s==='livrat'?'↺ reset':'↺ reset';
+ 
+  const html = pageData.map((ord,pageIdx)=>{
+    const realIdx = orders.indexOf(ord);
+    const isSelected = selectedRows.has(realIdx);
+    return `<tr class="${isSelected?'row-selected':''}">
+      <td><input type="checkbox" class="row-cb" data-idx="${realIdx}"
+           ${isSelected?'checked':''} onchange="toggleRowSelect(this,${realIdx})"
+           aria-label="Selectează rândul ${sanitize(ord.n)}"
+           style="width:auto;margin:0;cursor:pointer"></td>
+      <td>
+        <div style="font-weight:600;font-size:.9rem">${sanitize(ord.n)}</div>
+        ${ord.phone?`<div style="font-size:.75rem;color:var(--muted)">${sanitize(ord.phone)}</div>`:''}
+        ${ord.note?`<div style="font-size:.72rem;color:var(--accent2);margin-top:.1rem">💬 ${sanitize(ord.note)}</div>`:''}
+      </td>
+      <td>${sanitize(ord.o)}</td>
+      <td><span class="status-badge ${badgeCls(ord.s)}" aria-label="Status: ${sanitize(ord.s)}">${sanitize(ord.s)}</span></td>
+      <td><span class="priority-badge ${priCls(ord.pr||'low')}" aria-label="Prioritate: ${ord.pr||'low'}">${priIcon(ord.pr||'low')} ${ord.pr||'low'}</span></td>
+      <td><span class="awb-code">${sanitize(ord.awb)}</span></td>
+      <td>${ord.w?ord.w+' kg':'—'}</td>
+      <td><div class="actions-cell">
+        <button class="btn btn-sm btn-ghost" onclick="changeStatus(${realIdx})"
+                aria-label="${preLbl(ord.s)} ${sanitize(ord.n)}" title="${preLbl(ord.s)}">↻</button>
+        <button class="btn btn-sm" onclick="editOrder(${realIdx})"
+                aria-label="Editează ${sanitize(ord.n)}" title="Editează"
+                style="background:var(--accent2);color:#000">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delOrder(${realIdx})"
+                aria-label="Șterge ${sanitize(ord.n)}" title="Șterge">🗑️</button>
+        <button class="btn btn-sm btn-ghost" onclick="showQR('${sanitize(ord.awb)}')"
+                aria-label="QR ${sanitize(ord.awb)}" title="QR Code">📱</button>
+        <button class="btn btn-sm btn-ghost" onclick="copyAWB('${sanitize(ord.awb)}')"
+                aria-label="Copiază AWB" title="Copiază AWB">📋</button>
+        <button class="btn btn-sm btn-ghost" onclick="fav(${realIdx})"
+                aria-label="Favorite" title="Favorite">⭐</button>
+      </div></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2.5rem">
+    <i class="fas fa-box-open" style="font-size:2rem;display:block;margin-bottom:.5rem"></i>
+    Nicio comandă găsită.
+  </td></tr>`;
+ 
+  document.getElementById('ordersTable').innerHTML=html;
+ 
+  // Footer
+  document.getElementById('footTotal').textContent=orders.length;
+  document.getElementById('footP').textContent=p;
+  document.getElementById('footD').textContent=d;
+  document.getElementById('footL').textContent=l;
+  document.getElementById('footA').textContent=an;
+ 
+  // Stats bar
+  document.getElementById('statTotal').textContent=orders.length;
+  document.getElementById('statProcesat').textContent=p;
+  document.getElementById('statDrum').textContent=d;
+  document.getElementById('statLivrat').textContent=l;
+  document.getElementById('statAnulat').textContent=an;
+ 
+  // Progress
+  const pct=orders.length?Math.round((l/orders.length)*100):0;
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('progressPct').textContent=pct+'%';
+  const pb=document.querySelector('[role="progressbar"]');
+  if(pb) pb.setAttribute('aria-valuenow',pct);
+ 
+  // Charts update
+  updateCharts(p,d,l,an);
+ 
+  // Pagination
+  renderPagination(totalPages);
+}
+ 
+/* ============================================ */
+/* PAGINATION                                  */
+/* ============================================ */
+function renderPagination(total){
+  const el=document.getElementById('pagination');
+  if(!el) return;
+  if(total<=1){ el.innerHTML=''; return; }
+  let html=`<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} aria-label="Pagina anterioară">‹</button>`;
+  for(let i=1;i<=total;i++){
+    if(total>7 && i>2 && i<total-1 && Math.abs(i-currentPage)>1){
+      if(i===3||i===total-2) html+=`<span style="padding:0 .2rem;color:var(--muted)">…</span>`;
+      continue;
+    }
+    html+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})" aria-label="Pagina ${i}" aria-current="${i===currentPage}">${i}</button>`;
+  }
+  html+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''} aria-label="Pagina următoare">›</button>`;
+  el.innerHTML=html;
+}
+ 
+function goPage(p){ currentPage=p; render(); clearSelection(); }
+ 
+/* ============================================ */
+/* CHARTS                                       */
+/* ============================================ */
+function drawCharts(){
+  const colors={
+    procesat:{ bg:'rgba(245,158,11,.8)', border:'#f59e0b' },
+    drum:    { bg:'rgba(56,189,248,.8)',  border:'#38bdf8' },
+    livrat:  { bg:'rgba(34,197,94,.8)',   border:'#22c55e' },
+    anulat:  { bg:'rgba(239,68,68,.8)',   border:'#ef4444' },
+  };
+  const gridColor='rgba(255,255,255,.05)';
+  const tickColor='#94a3b8';
+ 
+  // Bar chart
+  const ctx1=document.getElementById('chart');
+  if(ctx1){
+    chartBar=new Chart(ctx1,{
+      type:'bar',
+      data:{
+        labels:['Procesat','În drum','Livrat','Anulat'],
+        datasets:[{
+          data:[0,0,0,0],
+          backgroundColor:[colors.procesat.bg,colors.drum.bg,colors.livrat.bg,colors.anulat.bg],
+          borderColor:[colors.procesat.border,colors.drum.border,colors.livrat.border,colors.anulat.border],
+          borderWidth:2, borderRadius:8
+        }]
+      },
+      options:{ responsive:true, plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{color:gridColor},ticks:{color:tickColor}},
+          y:{grid:{color:gridColor},ticks:{color:tickColor,stepSize:1},beginAtZero:true}
+        }
+      }
+    });
+  }
+ 
+  // Pie
+  const ctx2=document.getElementById('chartPie');
+  if(ctx2){
+    chartPie=new Chart(ctx2,{
+      type:'doughnut',
+      data:{
+        labels:['Procesat','În drum','Livrat','Anulat'],
+        datasets:[{
+          data:[0,0,0,0],
+          backgroundColor:['rgba(245,158,11,.8)','rgba(56,189,248,.8)','rgba(34,197,94,.8)','rgba(239,68,68,.8)'],
+          borderColor:['#f59e0b','#38bdf8','#22c55e','#ef4444'],
+          borderWidth:2
+        }]
+      },
+      options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ color:tickColor, padding:12 } } } }
+    });
+  }
+ 
+  // Line – fake weekly data
+  const ctx3=document.getElementById('chartLine');
+  const days=['Lun','Mar','Mie','Joi','Vin','Sâm','Dum'];
+  if(ctx3){
+    chartLine=new Chart(ctx3,{
+      type:'line',
+      data:{
+        labels:days,
+        datasets:[{
+          label:'Comenzi',
+          data:days.map(()=>Math.floor(Math.random()*8+1)),
+          backgroundColor:'rgba(56,189,248,.12)',
+          borderColor:'#38bdf8',
+          borderWidth:2, tension:.4, fill:true,
+          pointBackgroundColor:'#38bdf8', pointRadius:4
+        }]
+      },
+      options:{ responsive:true, plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{color:gridColor},ticks:{color:tickColor}},
+          y:{grid:{color:gridColor},ticks:{color:tickColor,stepSize:1},beginAtZero:true}
+        }
+      }
+    });
+  }
+ 
+  // Priority chart
+  const ctx4=document.getElementById('chartPriority');
+  if(ctx4){
+    chartPriority=new Chart(ctx4,{
+      type:'bar',
+      data:{
+        labels:['Scăzut','Mediu','Ridicat'],
+        datasets:[{
+          data:[0,0,0],
+          backgroundColor:['rgba(34,197,94,.8)','rgba(245,158,11,.8)','rgba(239,68,68,.8)'],
+          borderColor:['#22c55e','#f59e0b','#ef4444'],
+          borderWidth:2, borderRadius:8
+        }]
+      },
+      options:{ responsive:true, plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{color:gridColor},ticks:{color:tickColor}},
+          y:{grid:{color:gridColor},ticks:{color:tickColor,stepSize:1},beginAtZero:true}
+        }
+      }
+    });
+  }
+}
+ 
+function updateCharts(p,d,l,an){
+  if(chartBar){ chartBar.data.datasets[0].data=[p,d,l,an]; chartBar.update(); }
+  if(chartPie){ chartPie.data.datasets[0].data=[p,d,l,an]; chartPie.update(); }
+  if(chartPriority){
+    const low    = orders.filter(o=>(!o.pr||o.pr==='low')).length;
+    const medium = orders.filter(o=>o.pr==='medium').length;
+    const high   = orders.filter(o=>o.pr==='high').length;
+    chartPriority.data.datasets[0].data=[low,medium,high];
+    chartPriority.update();
+  }
+}
+ 
+/* ============================================ */
+/* TRACKER                                      */
+/* ============================================ */
+let selectedTrackerIdx=null;
+function renderTracker(){
+  const q=(document.getElementById('trackerSearch')?.value||'').toLowerCase();
+  const list=document.getElementById('trackerList');
+  if(!list) return;
+  const filtered=orders.filter(o=>
+    !q || o.n.toLowerCase().includes(q) || o.awb.toLowerCase().includes(q)
+  );
+  const dotColor={procesat:'var(--accent2)','în drum':'var(--accent)',livrat:'var(--green)',anulat:'var(--red)'};
+  list.innerHTML=filtered.map((o,i)=>
+    `<div class="tracker-item ${selectedTrackerIdx===orders.indexOf(o)?'selected':''}"
+          onclick="selectTracker(${orders.indexOf(o)})"
+          role="listitem" tabindex="0" aria-label="${sanitize(o.n)} - ${sanitize(o.awb)}"
+          onkeydown="if(event.key==='Enter'||event.key===' ')selectTracker(${orders.indexOf(o)})">
+      <div class="tracker-dot" style="background:${dotColor[o.s]||'var(--muted)'}" aria-hidden="true"></div>
+      <div class="tracker-info">
+        <div class="tracker-name">${sanitize(o.n)}</div>
+        <div class="tracker-awb">${sanitize(o.awb)}</div>
+        <div class="tracker-eta" style="color:var(--accent2)">Est. ${getETA(o.s)}</div>
+      </div>
+      <span class="tracker-status" style="color:${dotColor[o.s]}">${sanitize(o.s)}</span>
+    </div>`
+  ).join('') || '<p class="muted" style="padding:.5rem">Nicio comandă.</p>';
+  if(filtered.length && selectedTrackerIdx === null) selectTracker(orders.indexOf(filtered[0]));
+}
+ 
+function getETA(s){
+  if(s==='livrat') return 'Livrat';
+  if(s==='anulat') return 'Anulat';
+  if(s==='în drum') return 'Azi, '+new Date(Date.now()+3600000*2).toLocaleTimeString('ro-MD',{hour:'2-digit',minute:'2-digit'});
+  return 'Mâine, 10:00';
+}
+ 
+function selectTracker(idx){
+  selectedTrackerIdx=idx;
+  const o=orders[idx];
+  if(!o) return;
+  const title=document.getElementById('trackerTitle');
+  const etaBadge=document.getElementById('trackerEtaBadge');
+  if(title) title.textContent=`${o.n} — ${o.awb}`;
+  if(etaBadge){ etaBadge.textContent=getETA(o.s); etaBadge.style.display='inline-block'; }
+  // Update timeline
+  const tl=document.getElementById('trackerTimeline');
+  if(tl){
+    const steps=['Preluat','Procesat','În drum','Livrat'];
+    const activeIdx={'procesat':1,'în drum':2,'livrat':3,'anulat':0}[o.s]||0;
+    tl.innerHTML=steps.map((s,i)=>`
+      <div class="t-step" role="listitem">
+        <div class="t-dot ${i<activeIdx?'done':i===activeIdx?'active':''}" aria-label="${s}: ${i<activeIdx?'finalizat':i===activeIdx?'activ':'în așteptare'}"></div>
+        <span style="white-space:nowrap">${s}</span>
+      </div>
+      ${i<steps.length-1?`<div class="t-line ${i<activeIdx?'done':''}"></div>`:''}
+    `).join('');
+  }
+  renderTracker();
+}
+ 
+/* ============================================ */
+/* WEATHER (simulated)                          */
+/* ============================================ */
+const weatherProfiles=[
+  { icon:'⛅', desc:'Parțial înnorat', tempBase:22 },
+  { icon:'🌤️', desc:'Ușor înnorat',   tempBase:19 },
+  { icon:'☀️', desc:'Însorit',         tempBase:25 },
+  { icon:'🌧️', desc:'Ploaie',         tempBase:14 },
+  { icon:'🌩️', desc:'Furtună',        tempBase:16 },
+  { icon:'❄️', desc:'Ninsoare',        tempBase:-2 },
+];
+const forecastIcons=['☀️','⛅','🌤️','🌧️','🌩️','🌤️','☀️'];
+ 
+function renderWeather(){
+  const cities=[
+    {id:'1',name:'Chișinău', base:22, hum:65, wind:12},
+    {id:'2',name:'Bălți',    base:19, hum:70, wind:15},
+    {id:'3',name:'Cahul',    base:25, hum:55, wind:8},
+  ];
+  cities.forEach(c=>{
+    const profile=weatherProfiles[Math.floor(Math.random()*4)];
+    const temp=c.base+Math.round((Math.random()-0.5)*4);
+    const el=document.getElementById(`wt-temp${c.id}`);
+    const el2=document.getElementById(`wt-desc${c.id}`);
+    const elH=document.getElementById(`wt-hum${c.id}`);
+    const elW=document.getElementById(`wt-wind${c.id}`);
+    if(el)  el.textContent=temp+'°C';
+    if(el2) el2.textContent=profile.desc;
+    if(elH) elH.textContent=(c.hum+Math.round((Math.random()-0.5)*10))+'%';
+    if(elW) elW.textContent=(c.wind+Math.round((Math.random()-0.5)*4))+' km/h';
+    // Forecast
+    const fc=document.getElementById(`wt-forecast${c.id}`);
+    if(fc){
+      const days=['Lun','Mar','Mie','Joi','Vin'];
+      fc.innerHTML=days.map((d,i)=>`
+        <div class="forecast-day">
+          <div class="fd-day">${d}</div>
+          <span class="fd-icon" aria-hidden="true">${forecastIcons[i]}</span>
+          <div class="fd-temp">${c.base+Math.round((Math.random()-0.5)*6)}°</div>
+        </div>
+      `).join('');
+    }
+  });
+  // Header weather
+  const hw=document.getElementById('headerWeather');
+  if(hw){
+    const t=22+Math.round((Math.random()-0.5)*4);
+    hw.innerHTML=`<i class="fas fa-cloud-sun" aria-hidden="true"></i> <span>Chișinău: ${t}°C</span>`;
+  }
+}
+ 
+/* ============================================ */
+/* CURRENCY CONVERTER                           */
+/* ============================================ */
+const rates={
+  MDL:{EUR:.051,USD:.055,RON:.255,UAH:2.15,GBP:.044,RUB:5.1,MDL:1},
+  EUR:{MDL:19.6,USD:1.08,RON:4.97,UAH:42.1,GBP:.86,RUB:100.2,EUR:1},
+  USD:{MDL:18.1,EUR:.925,RON:4.6,UAH:39.0,GBP:.79,RUB:92.8,USD:1},
+  RON:{MDL:3.92,EUR:.201,USD:.218,UAH:8.43,GBP:.172,RUB:20.1,RON:1},
+  UAH:{MDL:.465,EUR:.0238,USD:.0256,RON:.1187,GBP:.0204,RUB:2.38,UAH:1},
+  GBP:{MDL:22.8,EUR:1.165,USD:1.264,RON:5.78,UAH:49.1,RUB:116.5,GBP:1},
+  RUB:{MDL:.196,EUR:.01,USD:.0108,RON:.0497,UAH:.42,GBP:.0086,RUB:1},
+};
+ 
+function convertCurrency(){
+  const amount=parseFloat(document.getElementById('currAmount')?.value)||0;
+  const from  =document.getElementById('currFrom')?.value;
+  const to    =document.getElementById('currTo')?.value;
+  const rate  =rates[from]?.[to]||1;
+  const result=(amount*rate).toFixed(2);
+  const el=document.getElementById('currResult');
+  const ri=document.getElementById('rateInfo');
+  if(el) el.textContent=`${amount} ${from} = ${result} ${to}`;
+  if(ri) ri.textContent=`1 ${from} = ${rate} ${to} · Curs orientativ`;
+}
+ 
+function swapCurrency(){
+  const f=document.getElementById('currFrom');
+  const t=document.getElementById('currTo');
+  const tmp=f.value; f.value=t.value; t.value=tmp;
+  convertCurrency();
+}
+ 
+/* ============================================ */
+/* NOTES                                        */
+/* ============================================ */
+function updateNotesStats(){
+  const val=document.getElementById('notes')?.value||'';
+  const chars=val.length;
+  const words=val.trim().split(/\s+/).filter(w=>w.length).length;
+  const el=document.getElementById('notesStats');
+  if(el) el.textContent=`${chars} / 2000 caractere · ${words} cuvinte`;
+}
+ 
+function saveNotes(){
+  localStorage.setItem('fc_notes', document.getElementById('notes')?.value||'');
+  showToast('📝 Notițe salvate!');
+}
+ 
+function clearNotes(){
+  const el=document.getElementById('notes');
+  if(el){ el.value=''; updateNotesStats(); }
+  showToast('🗑️ Notițe șterse','info');
+}
+ 
+function copyNotes(){
+  const val=document.getElementById('notes')?.value||'';
+  navigator.clipboard.writeText(val).then(()=>showToast('📋 Notițe copiate','info'));
+}
+ 
+function insertText(before,after){
+  const el=document.getElementById('notes');
+  if(!el) return;
+  const s=el.selectionStart, e=el.selectionEnd;
+  const sel=el.value.substring(s,e);
+  el.value=el.value.substring(0,s)+before+sel+after+el.value.substring(e);
+  el.focus(); el.setSelectionRange(s+before.length,s+before.length+sel.length);
+  updateNotesStats();
+}
+ 
+/* ============================================ */
+/* CALCULATOR                                   */
+/* ============================================ */
+function calcPrice(){
+  const km=Number(document.getElementById('km')?.value);
+  const kg=Number(document.getElementById('calcWeight')?.value)||0;
+  const type=document.getElementById('calcPriority')?.value||'standard';
+  const el=document.getElementById('price');
+  if(!km||km<1||km>10000){ el.textContent=''; showToast('❌ Distanță invalidă (1-10000 km)','error'); return; }
+  const ratePerKm={standard:5,express:8,'same-day':12}[type];
+  const weightSurcharge=kg>5?(kg-5)*10:0;
+  const fuel=km>100?Math.round(km*0.5):0;
+  const base=km*ratePerKm;
+  const total=base+weightSurcharge+fuel;
+  el.innerHTML=`
+    💰 Total: <span style="color:var(--accent);font-size:1.6rem">${total.toLocaleString('ro-MD')} MDL</span><br>
+    <span style="font-size:.75rem;color:var(--muted)">
+      Bază: ${base} MDL
+      ${weightSurcharge?'+ Suprasarcină greutate: '+weightSurcharge+' MDL':''}
+      ${fuel?'+ Combustibil: '+fuel+' MDL':''}
+    </span>
+  `;
+}
+ 
+/* ============================================ */
+/* LEADERBOARD                                  */
+/* ============================================ */
+const couriers=[
+  {name:'Alexandru Moraru', orders:142, rating:4.9, city:'Chișinău'},
+  {name:'Diana Lupu',       orders:127, rating:4.8, city:'Bălți'},
+  {name:'Igor Pavlov',      orders:118, rating:4.7, city:'Orhei'},
+  {name:'Cristina Bobu',    orders:109, rating:4.8, city:'Cahul'},
+  {name:'Vitalie Grosu',    orders:98,  rating:4.6, city:'Soroca'},
+  {name:'Lidia Postolachi', orders:91,  rating:4.7, city:'Ungheni'},
+  {name:'Mihai Anton',      orders:85,  rating:4.5, city:'Edineț'},
+];
+const rankIcons=['🥇','🥈','🥉'];
+ 
+function renderLeaderboard(data){
+  const container=document.getElementById('leaderboardList');
+  if(!container) return;
+  const max=data[0]?.orders||1;
+  container.innerHTML=data.map((c,i)=>`
+    <div class="lb-item" role="listitem" style="animation-delay:${i*.07}s">
+      <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}" aria-label="Locul ${i+1}">${rankIcons[i]||'#'+(i+1)}</div>
+      <div class="lb-info">
+        <div class="lb-name">${sanitize(c.name)}</div>
+        <div class="lb-sub"><i class="fas fa-location-dot" aria-hidden="true"></i> ${sanitize(c.city)} · ⭐ ${c.rating}</div>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(c.orders/max*100)}%"></div></div>
+      </div>
+      <div class="lb-score">${c.orders} livr.</div>
+    </div>
+  `).join('');
+}
+ 
+function shuffleLeaderboard(){
+  const shuffled=[...couriers].sort(()=>Math.random()-.5).map(c=>({...c,orders:Math.floor(Math.random()*80+60)}));
+  shuffled.sort((a,b)=>b.orders-a.orders);
+  renderLeaderboard(shuffled);
+  showToast('🏆 Clasament actualizat!','info');
+}
+ 
+/* ============================================ */
+/* PHOTO UPLOAD                                 */
+/* ============================================ */
+let photos=[];
+function loadPhotos(e){
+  [...e.target.files].forEach(f=>{ if(f.type.startsWith('image/')) addPhoto(f); });
+  e.target.value='';
+}
+function addPhoto(file){
+  if(file.size>5*1024*1024){ showToast('❌ Fișier prea mare (max 5 MB)','error'); return; }
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    photos.push({src:ev.target.result,name:file.name});
+    renderPhotos();
+  };
+  reader.readAsDataURL(file);
+}
+function dropPhoto(e){
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('dragover');
+  [...e.dataTransfer.files].forEach(f=>{ if(f.type.startsWith('image/')) addPhoto(f); });
+}
+function dragOver(e){ e.preventDefault(); document.getElementById('dropZone').classList.add('dragover'); }
+function dragLeave(){  document.getElementById('dropZone').classList.remove('dragover'); }
+function deletePhoto(i){ photos.splice(i,1); renderPhotos(); }
+function renderPhotos(){
+  const container=document.getElementById('photoPreview');
+  container.innerHTML=photos.map((p,i)=>`
+    <div class="photo-thumb" role="listitem">
+      <img src="${p.src}" alt="Fotografie ${sanitize(p.name)}" loading="lazy">
+      <button class="del-photo" onclick="deletePhoto(${i})" aria-label="Șterge fotografia ${sanitize(p.name)}">×</button>
+    </div>
+  `).join('');
+  const ctr=document.getElementById('photoCounter');
+  if(ctr) ctr.textContent=`${photos.length} fotografie${photos.length!==1?'i':''}`;
+}
+ 
+/* ============================================ */
+/* INVOICE GENERATOR                            */
+/* ============================================ */
+const INV_RATES={standard:5,express:8,'same-day':12};
+let invNumber=Math.floor(Math.random()*9000+1000);
+ 
+function generateInvoice(){
+  const client  =document.getElementById('inv-client')?.value.trim();
+  const service =document.getElementById('inv-service')?.value.trim()||'Livrare standard';
+  const km      =parseFloat(document.getElementById('inv-km')?.value)||0;
+  const type    =document.getElementById('inv-type')?.value||'standard';
+  const preview =document.getElementById('invoicePreview');
+  if(!client||!km){ showToast('❌ Completează clientul și km','error'); return; }
+ 
+  invNumber++;
+  const rate    =INV_RATES[type];
+  const subtotal=km*rate;
+  const tva     =Math.round(subtotal*.2*100)/100;
+  const total   =Math.round((subtotal+tva)*100)/100;
+  const today   =new Date().toLocaleDateString('ro-MD',{day:'2-digit',month:'long',year:'numeric'});
+  const due     =new Date(Date.now()+86400000*14).toLocaleDateString('ro-MD',{day:'2-digit',month:'long',year:'numeric'});
+ 
+  preview.innerHTML=`
+    <div class="invoice-header">
+      <div>
+        <div class="invoice-logo">🚚 FastCourier</div>
+        <div style="font-size:.75rem;color:#666;margin-top:.3rem">Str. Eminescu 12, Chișinău</div>
+        <div style="font-size:.75rem;color:#666">info@fastcourier.md</div>
+      </div>
+      <div class="invoice-meta">
+        <strong>FACTURĂ #FC-${invNumber}</strong>
+        <div>Data: ${today}</div>
+        <div>Scadent: ${due}</div>
+        <div style="margin-top:.3rem;background:#f0fdf4;color:#16a34a;padding:.2rem .5rem;border-radius:4px;font-weight:700">NEPLĂTIT</div>
+      </div>
+    </div>
+    <div class="invoice-parties">
+      <div class="invoice-party">
+        <h4>De la</h4>
+        <div style="font-weight:600">FastCourier SRL</div>
+        <div>IDNO: 1234567890123</div>
+        <div>Str. Eminescu 12, Chișinău</div>
+      </div>
+      <div class="invoice-party">
+        <h4>Facturat la</h4>
+        <div style="font-weight:600">${sanitize(client)}</div>
+        <div>Chișinău, Moldova</div>
+      </div>
+    </div>
+    <table class="invoice-items">
+      <thead><tr><th>Descriere</th><th>Dist.</th><th>Tarif</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>${sanitize(service)}</td>
+          <td>${km} km</td>
+          <td>${rate} MDL/km</td>
+          <td>${subtotal.toFixed(2)} MDL</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="invoice-total">
+      <div class="invoice-total-row"><span>Subtotal:</span><span>${subtotal.toFixed(2)} MDL</span></div>
+      <div class="invoice-total-row"><span>TVA (20%):</span><span>${tva.toFixed(2)} MDL</span></div>
+      <div class="invoice-total-row"><span>TOTAL:</span><span style="color:#0ea5e9">${total.toFixed(2)} MDL</span></div>
+    </div>
+    <div class="invoice-footer">
+      Vă mulțumim pentru colaborare! · IBAN: MD00 XXXX 0000 0000 0000 0000 · BIC: AGRNMD2X
+    </div>
+  `;
+  showToast('📄 Factură generată: FC-'+invNumber,'info');
+}
+ 
+function printInvoice(){
+  const content=document.getElementById('invoicePreview')?.innerHTML;
+  if(!content||content.includes('Completează')){ showToast('❌ Generează factura mai întâi','error'); return; }
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Factură</title>
+    <style>body{font-family:sans-serif;padding:2rem;color:#111}
+    .invoice-header{display:flex;justify-content:space-between}
+    .invoice-logo{font-size:1.4rem;font-weight:800;color:#0ea5e9}
+    table{width:100%;border-collapse:collapse;margin:1rem 0}
+    th{background:#f1f5f9;padding:.5rem;text-align:left;font-size:.8rem;text-transform:uppercase}
+    td{padding:.5rem;border-top:1px solid #e2e8f0}
+    .invoice-total-row{display:flex;justify-content:flex-end;gap:2rem;padding:.3rem 0}
+    </style></head><body>${content}</body></html>`);
+  w.document.close(); w.print();
+}
+ 
+/* ============================================ */
+/* CONTACT FORM                                 */
+/* ============================================ */
+function updateCFCount(){
+  const v=document.getElementById('cf-message')?.value.length||0;
+  const el=document.getElementById('cfCharCount');
+  if(el) el.textContent=v+'/500';
+}
+ 
+function submitContactForm(){
+  const name=document.getElementById('cf-name')?.value.trim();
+  const email=document.getElementById('cf-email')?.value.trim();
+  const subj=document.getElementById('cf-subject')?.value;
+  const msg=document.getElementById('cf-message')?.value.trim();
+  const gdpr=document.getElementById('cf-gdpr')?.checked;
+  const emailRx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!name||!email||!subj||!msg){ showToast('❌ Completează toate câmpurile obligatorii','error'); return; }
+  if(!emailRx.test(email)){ showToast('❌ Email invalid','error'); return; }
+  if(!gdpr){ showToast('❌ Acceptă politica de confidențialitate','error'); return; }
+  document.getElementById('contactFormWrapper').style.display='none';
+  const sent=document.getElementById('formSent');
+  if(sent){ sent.style.display='flex'; sent.setAttribute('aria-live','assertive'); }
+  logActivity(`Mesaj trimis de ${sanitize(name)}`, `Subiect: ${sanitize(subj)}`, '✉️');
+  showToast('✅ Mesaj trimis cu succes!');
+}
+ 
+function resetContactForm(){
+  document.getElementById('contactFormWrapper').style.display='block';
+  document.getElementById('formSent').style.display='none';
+  ['cf-name','cf-email','cf-phone','cf-message'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('cf-subject').value='';
+  document.getElementById('cf-gdpr').checked=false;
+  updateCFCount();
+}
+ 
+/* ============================================ */
+/* EXPORT / IMPORT                              */
+/* ============================================ */
+function exportCSV(){
+  const headers=['AWB','Client','Oras','Status','Prioritate','Greutate','Telefon','Nota','Data'];
+  const rows=orders.map(o=>[
+    o.awb, o.n, o.o, o.s, o.pr||'low', o.w||0, o.phone||'', o.note||'',
+    o.ts?new Date(o.ts).toLocaleDateString('ro-MD'):''
+  ].map(v=>`"${String(v).replace(/"/g,'""')}"`));
+  const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='fastcourier-comenzi-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  showToast('📊 CSV exportat ('+orders.length+' rânduri)','info');
+}
+ 
+function exportJSON(){
+  const json=JSON.stringify(orders,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='fastcourier-comenzi-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  showToast('📁 JSON exportat','info');
+}
+ 
+function importJSON(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange=e=>{
+    const f=e.target.files[0];
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try {
+        const data=JSON.parse(ev.target.result);
+        if(!Array.isArray(data)) throw new Error('Invalid format');
+        const imported=data.filter(o=>o.n&&o.o&&o.awb);
+        orders=[...imported,...orders];
+        saveOrders(); render(); renderTracker();
+        showToast(`📥 ${imported.length} comenzi importate`,'info');
+        logActivity(`Import JSON — ${imported.length} comenzi`, 'Import realizat cu succes', '📥');
+      } catch(err){ showToast('❌ JSON invalid','error'); }
+    };
+    reader.readAsText(f);
+  };
+  input.click();
+}
+ 
+function importCSV(e){
+  const f=e.target.files[0]; if(!f) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const lines=ev.target.result.split('\n').slice(1).filter(l=>l.trim());
+    let count=0;
+    lines.forEach(line=>{
+      const cols=line.split(',').map(v=>v.replace(/^"|"$/g,'').replace(/""/g,'"').trim());
+      if(cols.length>=3 && cols[0] && cols[1] && cols[2]){
+        orders.unshift({
+          awb:sanitize(cols[0]||genAWB()),
+          n:sanitize(cols[1]||'N/A'),
+          o:sanitize(cols[2]||'N/A'),
+          s:sanitize(cols[3]||'procesat'),
+          pr:sanitize(cols[4]||'low'),
+          w:parseFloat(cols[5])||0,
+          phone:sanitize(cols[6]||''),
+          note:sanitize(cols[7]||''),
+          ts:Date.now()
+        });
+        count++;
+      }
+    });
+    saveOrders(); render(); renderTracker();
+    showToast(`📥 ${count} comenzi importate din CSV`,'info');
+  };
+  reader.readAsText(f,'UTF-8');
+}
+ 
+/* ============================================ */
+/* MUSIC PLAYER                                 */
+/* ============================================ */
+const tracks=[
+  {title:'Lofi Hip Hop – Relaxing',     dur:240},
+  {title:'Ambient Chill – Focus Mode',  dur:180},
+  {title:'Jazz Cafe – Morning Vibes',   dur:210},
+  {title:'Deep Focus – Work Session',   dur:300},
+  {title:'Nature Sounds – Forest Rain', dur:360},
+];
+let currentTrack=0;
+let isPlaying=false;
+let isShuffle=false;
+let progTimer=null;
+let progVal=0;
+let volVal=70;
+ 
+function toggleMusicPlayer(){
+  const player=document.getElementById('music-player');
+  const fab=document.querySelector('.music-fab');
+  const isOpen=player.classList.toggle('open');
+  fab?.setAttribute('aria-expanded', String(isOpen));
+}
+ 
+function updatePlayerUI(){
+  const track=tracks[currentTrack];
+  const el=document.getElementById('playerTrack');
+  if(el) el.textContent=track.title;
+  const dur=document.getElementById('pDur');
+  if(dur) dur.textContent=fmtSeconds(track.dur);
+}
+ 
+function fmtSeconds(s){
+  return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
+}
+ 
+function togglePlay(){
+  isPlaying=!isPlaying;
+  const btn=document.getElementById('playBtn');
+  if(btn) btn.innerHTML=isPlaying?'<i class="fas fa-pause" aria-hidden="true"></i>':'<i class="fas fa-play" aria-hidden="true"></i>';
+  const eq=document.getElementById('musicEQ');
+  if(eq) eq.style.display=isPlaying?'flex':'none';
+  if(isPlaying) startProgress();
+  else { clearInterval(progTimer); }
+}
+ 
+function startProgress(){
+  clearInterval(progTimer);
+  const totalDur=tracks[currentTrack].dur;
+  progTimer=setInterval(()=>{
+    progVal++;
+    if(progVal>=totalDur){ progVal=0; nextTrack(); return; }
+    const pct=Math.round(progVal/totalDur*100);
+    const fill=document.getElementById('progFill');
+    if(fill) fill.style.width=pct+'%';
+    const pt=document.getElementById('pTime');
+    if(pt) pt.textContent=fmtSeconds(progVal); 
+  },1000);
+}
+ 
+function nextTrack(){
+  progVal=0;
+  currentTrack=isShuffle?Math.floor(Math.random()*tracks.length):(currentTrack+1)%tracks.length;
+  updatePlayerUI();
+  if(isPlaying) startProgress();
+}
+ 
+function prevTrack(){
+  progVal=0;
+  currentTrack=(currentTrack-1+tracks.length)%tracks.length;
+  updatePlayerUI();
+  if(isPlaying) startProgress();
+}
+ 
+function toggleShuffle(){
+  isShuffle=!isShuffle;
+  const btn=document.getElementById('shuffleBtn');
+  if(btn) btn.classList.toggle('active',isShuffle);
+}
+ 
+function setVolume(v){
+  volVal=parseInt(v);
+  const el=document.getElementById('volDisplay');
+  if(el) el.textContent=volVal+'%';
+}
+ 
+function seekTrack(e){
+  const bar=e.currentTarget;
+  const rect=bar.getBoundingClientRect();
+  const ratio=(e.clientX-rect.left)/rect.width;
+  progVal=Math.round(ratio*tracks[currentTrack].dur);
+  const fill=document.getElementById('progFill');
+  if(fill) fill.style.width=Math.round(ratio*100)+'%';
+}
+ 
+/* ============================================ */
+/* TOAST                                        */
+/* ============================================ */
+let toastQueue=[];
+let toastActive=false;
+ 
+function showToast(msg, type='success'){
+  toastQueue.push({msg,type});
+  if(!toastActive) processToastQueue();
+}
+ 
+function processToastQueue(){
+  if(!toastQueue.length){ toastActive=false; return; }
+  toastActive=true;
+  const {msg,type}=toastQueue.shift();
+  const t=document.getElementById('toast');
+  t.innerHTML=`<span>${msg}</span><div class="toast-progress"></div>`;
+  t.className=`visible ${type==='error'?'error':type==='info'?'info':type==='warn'?'warn':''}`;
+  setTimeout(()=>{ t.className=''; setTimeout(processToastQueue,200); },2800);
+}
+ 
+/* ============================================ */
+/* THEME                                        */
+/* ============================================ */
+function setTheme(cls){
+  document.body.className=cls;
+  localStorage.setItem('fc_theme',cls);
+}
+ 
+/* ============================================ */
+/* CLOCK & DATE & NETWORK                       */
+/* ============================================ */
+setInterval(()=>{
+  const el=document.getElementById('clock');
+  if(el) el.textContent=new Date().toLocaleTimeString('ro-MD');
+},1000);
+ 
+(function initDate(){
+  const el=document.getElementById('dateNow');
+  if(el) el.textContent=new Date().toLocaleDateString('ro-MD');
+})();
+ 
+function updateNet(){
+  const el=document.getElementById('netStatus');
+  if(el) el.innerHTML=navigator.onLine?'<span style="color:var(--green)">🟢 Online</span>':'<span style="color:var(--red)">🔴 Offline</span>';
+}
+setInterval(updateNet,2000);
+window.addEventListener('online', ()=>{ updateNet(); showToast('🟢 Conexiune restabilită','info'); });
+window.addEventListener('offline',()=>{ updateNet(); showToast('🔴 Conexiune pierdută','error'); });
+ 
+/* ============================================ */
+/* ROTATING FACTS                               */
+/* ============================================ */
+const facts=[
+  '🚀 Livrare rapidă în 24h oriunde în Moldova',
+  '📍 Tracking AWB live în timp real',
+  '🛡️ Sistem securizat XSS + CSP + validare',
+  '♿ 100% accesibil WAI-ARIA WCAG 2.1 AA',
+  '📊 Dashboard cu 4 grafice interactive',
+  '💾 Date salvate local pentru orice sesiune',
+  '📱 QR Code automat pentru fiecare AWB',
+  '🏆 Leaderboard pentru top curieri',
+  '📄 Generator factură cu previzualizare live',
+  '🎵 Player muzică ambientală integrat',
+  '🌦️ Meteo simulat pentru 3 orașe Moldova',
+  '💱 Convertor valutar MDL / EUR / USD / RON',
+  '⌨️ 10+ scurtături de tastatură',
+  '📤 Export CSV, JSON și import',
+  '🔢 Paginare, filtrare, sortare avansată',
+];
+let factIdx=0;
+setInterval(()=>{
+  factIdx=(factIdx+1)%facts.length;
+  const el=document.getElementById('fact');
+  if(el){ el.style.opacity='0'; setTimeout(()=>{ el.textContent=facts[factIdx]; el.style.opacity='1'; },300); }
+},3500);
+(()=>{ const el=document.getElementById('fact'); if(el) el.textContent=facts[0]; })();
+ 
+/* ============================================ */
+/* HAMBURGER                                    */
+/* ============================================ */
+const menuBtn=document.querySelector('.menu-btn');
+const navLinks=document.getElementById('main-nav');
+if(menuBtn) menuBtn.addEventListener('click',()=>{
+  const isOpen=menuBtn.getAttribute('aria-expanded')==='true';
+  menuBtn.setAttribute('aria-expanded',String(!isOpen));
+  navLinks?.classList.toggle('open',!isOpen);
+  menuBtn.setAttribute('aria-label',isOpen?'Deschide meniul':'Închide meniul');
+});
+navLinks?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  menuBtn?.setAttribute('aria-expanded','false');
+  menuBtn?.setAttribute('aria-label','Deschide meniul');
+  navLinks.classList.remove('open');
+}));
+ 
+/* ============================================ */
+/* SCROLL EFFECTS                               */
+/* ============================================ */
+window.addEventListener('scroll',()=>{
+  const topBtn=document.getElementById('topBtn');
+  if(topBtn) topBtn.style.display=scrollY>300?'flex':'none';
+  const header=document.getElementById('mainHeader');
+  if(header) header.classList.toggle('scrolled',scrollY>20);
+});
+function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+function printPage(){ window.print(); }
+ 
+/* ============================================ */
+/* INTERSECTION OBSERVER                        */
+/* ============================================ */
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+ 
+/* ============================================ */
+/* ACTIVE NAV LINK                              */
+/* ============================================ */
+const sections=document.querySelectorAll('section[id]');
+const navLinkEls=document.querySelectorAll('nav a');
+const sectObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id=e.target.id;
+      navLinkEls.forEach(a=>{
+        a.classList.toggle('active-link',a.getAttribute('href')==='#'+id);
+      });
+    }
+  });
+},{threshold:.4});
+sections.forEach(s=>sectObserver.observe(s));
+ 
+/* ============================================ */
+/* FULLSCREEN                                   */
+/* ============================================ */
+function openFullscreen(){
+  document.documentElement.requestFullscreen().catch(()=>showToast('❌ Fullscreen indisponibil','error'));
+}
+ 
+/* ============================================ */
+/* MODAL BACKDROP & ESCAPE                      */
+/* ============================================ */
+document.getElementById('editModal').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+document.getElementById('qrModal').addEventListener('click',function(e){ if(e.target===this) closeQR(); });
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeModal(); closeQR(); }
+  if(e.ctrlKey&&e.key==='s'){ e.preventDefault(); saveNotes(); }
+  if(e.altKey){
+    if(e.key==='n'){ e.preventDefault(); document.getElementById('inp-client')?.focus(); window.location='#adauga'; }
+    if(e.key==='s'){ e.preventDefault(); document.getElementById('searchClient')?.focus(); }
+    if(e.key==='e'){ e.preventDefault(); exportCSV(); }
+    if(e.key==='p'){ e.preventDefault(); printPage(); }
+    if(e.key==='t'){ e.preventDefault(); toggleMusicPlayer(); }
+    if(e.key==='h'){ e.preventDefault(); scrollToTop(); }
+    if(e.key==='l'){ e.preventDefault(); logout(); }
+    const themes=['','theme-blue','theme-green','theme-red','theme-purple','theme-light','theme-cyber','theme-sunset'];
+    if(e.key>='1'&&e.key<='8'){ e.preventDefault(); setTheme(themes[parseInt(e.key)-1]); }
+  }
+});
+ 
+/* ============================================ */
+/* ANIMATE STAT CARD                            */
+/* ============================================ */
+function animateStatCard(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.style.transform='scale(1.2)';
+  el.style.color='var(--accent2)';
+  setTimeout(()=>{ el.style.transform=''; el.style.color=''; },400);
+}
+ 
+/* ============================================ */
+/* START APP                                    */
+/* ============================================ */
+function startApp(){
+  document.getElementById('auth').style.display='none';
+  document.getElementById('app').style.display='block';
+  const user=localStorage.getItem('fc_current')||'';
+  const wMsg=document.getElementById('welcomeMsg');
+  if(wMsg) wMsg.innerHTML=`<i class="fas fa-user-circle" aria-hidden="true"></i> ${sanitize(user)}`;
+  const notesEl=document.getElementById('notes');
+  if(notesEl){ notesEl.value=localStorage.getItem('fc_notes')||''; updateNotesStats(); }
+  render();
+  drawCharts();
+  renderLeaderboard(couriers);
+  renderTracker();
+  renderTimeline();
+  renderWeather();
+  convertCurrency();
+  updateNotifBadge();
+ 
+  // Initialize notifications with welcome ones
+  if(!localStorage.getItem('fc_notifs')){
+    addNotification('Bine ai venit, '+user+'!');
+    addNotification('Ai '+orders.length+' comenzi active');
+    addNotification('Sistem actualizat la v2.0');
+  }
+  renderNotifList();
+ 
+  // Observe newly added reveals
+  setTimeout(()=>{
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+  },200);
+ 
+  // Refresh weather every 5 minutes
+  setInterval(renderWeather, 5*60*1000);
+}
+ 
+/* ============================================ */
+/* LOADER & AUTO LOGIN                          */
+/* ============================================ */
+const loaderMessages=[
+  'Inițializare sistem...',
+  'Se verifică autentificarea...',
+  'Se încarcă modulele...',
+  'Aproape gata...',
+];
+let lmIdx=0;
+const lmTimer=setInterval(()=>{
+  lmIdx=(lmIdx+1)%loaderMessages.length;
+  const el=document.getElementById('loaderText');
+  if(el) el.textContent=loaderMessages[lmIdx];
+},350);
+ 
+window.addEventListener('load',()=>{
+  clearInterval(lmTimer);
+  const saved=localStorage.getItem('fc_theme');
+  if(saved) document.body.className=saved;
+  setTimeout(()=>{
+    const loader=document.getElementById('loader');
+    loader.style.opacity='0';
+    setTimeout(()=>loader.style.display='none',500);
+    if(localStorage.getItem('fc_current')) startApp();
+    else document.getElementById('auth').style.display='flex';
+  },1600);
+});
+</script> 
 </body>
 </html>
